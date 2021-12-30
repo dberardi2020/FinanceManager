@@ -7,7 +7,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text>
+      <v-btn text @click="foobarClicked">
         <div>Foobar</div>
       </v-btn>
     </v-app-bar>
@@ -23,5 +23,9 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 @Component({})
-export default class App extends Vue {}
+export default class App extends Vue {
+  foobarClicked(): void {
+    alert("Hello");
+  }
+}
 </script>
