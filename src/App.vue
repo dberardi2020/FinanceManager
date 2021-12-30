@@ -26,7 +26,7 @@ import { auth } from "@/firebase";
 @Component({})
 export default class App extends Vue {
   userClicked(): void {
-    alert("Current user: " + auth.currentUser);
+    alert("Current user: " + auth.currentUser?.email);
   }
 }
 </script>

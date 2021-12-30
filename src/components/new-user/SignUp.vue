@@ -38,6 +38,8 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Ref } from "vue-property-decorator";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase";
 
 @Component({})
 export default class About extends Vue {
@@ -64,8 +66,19 @@ export default class About extends Vue {
   @Ref("form") readonly form: any;
 
   validateClicked(): void {
-    const isValid = this.form.validate();
-    alert("Is form valid? " + isValid);
+    if (this.form.validate()) {
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          // todo direct user to home page
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // todo handle error
+        });
+    }
   }
 }
 </script>
