@@ -7,8 +7,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text @click="foobarClicked">
-        <div>Foobar</div>
+      <v-btn text @click="userClicked">
+        <div>User</div>
       </v-btn>
     </v-app-bar>
 
@@ -21,11 +21,12 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
+import { auth } from "@/firebase";
 
 @Component({})
 export default class App extends Vue {
-  foobarClicked(): void {
-    alert("Hello");
+  userClicked(): void {
+    alert("Current user: " + auth.currentUser);
   }
 }
 </script>
