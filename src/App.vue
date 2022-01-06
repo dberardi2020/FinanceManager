@@ -7,9 +7,7 @@
 
       <v-spacer></v-spacer>
 
-      <f-btn text @click="userClicked">
-        <div>User</div>
-      </f-btn>
+      <FBtn text @click="userClicked">User</FBtn>
     </v-app-bar>
 
     <v-main>
@@ -22,7 +20,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { auth } from "@/firebase";
-import FBtn from "@/components/vuetify-component-wrappers/FButton/FBtn.vue";
+import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 
 @Component({
   components: { FBtn },

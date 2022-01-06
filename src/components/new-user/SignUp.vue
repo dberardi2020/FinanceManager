@@ -1,35 +1,28 @@
 <template>
   <v-form v-model="isFormValid" ref="form">
     <v-container>
-      <v-text-field
-        v-model="name"
-        :rules="nameRules"
-        label="Name"
-        required
-      ></v-text-field>
-
-      <v-text-field
+      <FTextField
         v-model="email"
         :rules="emailRules"
         label="Email"
         required
-      ></v-text-field>
-
-      <v-text-field
+      ></FTextField>
+      <FTextField
         v-model="password"
         :rules="passwordRules"
+        type="password"
         counter=""
         label="Password"
         required
-      ></v-text-field>
-      <v-btn
+      ></FTextField>
+      <FBtn
         :disabled="!isFormValid"
         color="success"
         class="mr-4"
         @click="validateClicked"
       >
-        Validate
-      </v-btn>
+        Create Account
+      </FBtn>
     </v-container>
   </v-form>
 </template>
@@ -40,8 +33,12 @@ import Component from "vue-class-component";
 import { Ref } from "vue-property-decorator";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase";
+import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
+import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 
-@Component({})
+@Component({
+  components: { FBtn, FTextField },
+})
 export default class About extends Vue {
   isFormValid = false;
 
@@ -57,7 +54,7 @@ export default class About extends Vue {
   password = "";
   passwordMinLength = 6;
   passwordRules = [
-    (v: string): boolean | string => !!v || "E-mail is required",
+    (v: string): boolean | string => !!v || "Password is required",
     (v: string): boolean | string =>
       v.length >= this.passwordMinLength ||
       "Password must be at least 6 characters",
