@@ -20,6 +20,16 @@ const routes: Array<RouteConfig> = [
     name: "LogIn",
     component: () => import("../components/new-user/LogIn.vue"),
   },
+  {
+    path: "/purchases",
+    name: "Purchases",
+    component: () => import("../views/Purchases.vue"),
+  },
+  {
+    path: "/subscriptions",
+    name: "Subscriptions",
+    component: () => import("../views/Subscriptions.vue"),
+  },
 ];
 
 const router = new VueRouter({

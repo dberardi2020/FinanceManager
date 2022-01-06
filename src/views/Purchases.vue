@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>This is the Home page</h1>
+    <h1>This is the Purchases Page</h1>
   </div>
 </template>
 
@@ -9,5 +9,5 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 @Component({})
-export default class Home extends Vue {}
+export default class Purchases extends Vue {}
 </script>
