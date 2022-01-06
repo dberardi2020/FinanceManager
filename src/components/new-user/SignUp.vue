@@ -39,7 +39,7 @@ import { LogInSignUp } from "@/mixins/users/LogInSignUp";
 @Component({
   components: { FBtn, FTextField },
 })
-export default class About extends LogInSignUp {
+export default class SignUp extends LogInSignUp {
   isFormValid = false;
   email = "";
   password = "";
