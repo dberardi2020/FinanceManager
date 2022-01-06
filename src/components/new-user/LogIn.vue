@@ -21,7 +21,7 @@
         class="mr-4"
         @click="validateClicked"
       >
-        Create Account
+        Log In
       </FBtn>
     </v-container>
   </v-form>
@@ -30,7 +30,7 @@
 <script lang="ts">
 import Component from "vue-class-component";
 import { Ref } from "vue-property-decorator";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase";
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
@@ -39,8 +39,10 @@ import { LogInSignUp } from "@/mixins/users/LogInSignUp";
 @Component({
   components: { FBtn, FTextField },
 })
-export default class About extends LogInSignUp {
+export default class LogIn extends LogInSignUp {
   isFormValid = false;
+
+  name = "";
   email = "";
   password = "";
 
@@ -48,9 +50,9 @@ export default class About extends LogInSignUp {
 
   validateClicked(): void {
     if (this.form.validate()) {
-      createUserWithEmailAndPassword(auth, this.email, this.password)
+      signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
-          alert("Created account: " + userCredential.user.email);
+          alert("User logged in: " + userCredential.user.email);
           // todo direct user to home page
         })
         .catch((error) => {
