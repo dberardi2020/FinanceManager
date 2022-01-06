@@ -7,9 +7,9 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text @click="userClicked">
+      <f-btn text @click="userClicked">
         <div>User</div>
-      </v-btn>
+      </f-btn>
     </v-app-bar>
 
     <v-main>
@@ -22,8 +22,11 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { auth } from "@/firebase";
+import FBtn from "@/components/vuetify-component-wrappers/FButton/FBtn.vue";
 
-@Component({})
+@Component({
+  components: { FBtn },
+})
 export default class App extends Vue {
   userClicked(): void {
     alert("Current user: " + auth.currentUser?.email);
