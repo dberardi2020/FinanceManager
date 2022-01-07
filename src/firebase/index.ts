@@ -1,7 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
+import { getModule } from "vuex-module-decorators";
+import { UserStore } from "@/store/UserStore";
 import store from "@/store";
+
+const userStore = getModule(UserStore, store);
 
 const firebaseConfig = {
   apiKey: "AIzaSyBV60lSb6Y1Y8ojVOR4zYn6NBz5U-cd9x4",
@@ -20,9 +24,9 @@ const auth = getAuth(app);
 
 auth.onAuthStateChanged((user) => {
   if (user) {
-    store.dispatch("setUser", user);
+    userStore.setUser(user);
   } else {
-    store.dispatch("setUser", null);
+    userStore.setUser(null);
   }
 });
 

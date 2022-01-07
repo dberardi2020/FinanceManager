@@ -34,17 +34,22 @@ import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import FMenu from "@/components/vuetify-component-wrappers/FMenu/FMenu.vue";
 import { getAuth, signOut } from "firebase/auth";
+import { getModule } from "vuex-module-decorators";
+import { UserStore } from "@/store/UserStore";
+import store from "@/store";
+
+const userStore = getModule(UserStore, store);
 
 @Component({
   components: { FMenu, FBtn },
 })
 export default class App extends Vue {
   loggedInUserEmail(): string {
-    return this.$store.getters.getUser?.email;
+    return userStore.user?.email ?? "";
   }
 
   isUserLoggedIn(): boolean {
-    return this.$store.getters.getUser;
+    return !!userStore.user;
   }
 
   logout(): void {
