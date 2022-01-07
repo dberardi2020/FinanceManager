@@ -42,10 +42,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "@/firebase";
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { LogInSignUp } from "@/mixins/users/LogInSignUp";
+import { auth } from "@/main";
 
 @Component({
   components: { FBtn, FTextField },
