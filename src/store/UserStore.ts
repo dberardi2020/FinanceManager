@@ -1,5 +1,5 @@
 import store from "@/store/index";
-import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
+import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 import firebase from "firebase/compat";
 import UserInfo = firebase.UserInfo;
 
@@ -10,10 +10,5 @@ export class UserStore extends VuexModule {
   @Mutation
   setUser(user: UserInfo | null): void {
     this.user = user;
-  }
-
-  @Action({ commit: "setUser" })
-  getUser(): UserInfo | null {
-    return this.user;
   }
 }
