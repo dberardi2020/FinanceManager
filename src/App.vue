@@ -8,7 +8,6 @@
       <v-spacer></v-spacer>
 
       <FBtn v-if="!isUserLoggedIn()" text to="login">Log In</FBtn>
-      <FBtn v-if="!isUserLoggedIn()" text to="signup">Sign Up</FBtn>
 
       <FMenu v-if="isUserLoggedIn()">
         <template v-slot:hoverItem>
@@ -60,9 +59,9 @@ export default class App extends Vue {
         // todo handle logout
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // todo handle error
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        alert(error.message);
       });
   }
 }
