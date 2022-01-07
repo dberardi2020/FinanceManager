@@ -36,6 +36,7 @@ import { getAuth, signOut } from "firebase/auth";
 import { getModule } from "vuex-module-decorators";
 import { UserStore } from "@/store/UserStore";
 import store from "@/store";
+import router from "@/router";
 
 const userStore = getModule(UserStore, store);
 
@@ -56,7 +57,7 @@ export default class App extends Vue {
     signOut(auth)
       .then(() => {
         alert("Log out successful");
-        // todo handle logout
+        router.push({ name: "LogIn" });
       })
       .catch((error) => {
         // const errorCode = error.code;

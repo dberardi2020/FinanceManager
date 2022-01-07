@@ -46,6 +46,7 @@ import FTextField from "@/components/vuetify-component-wrappers/FTextField/FText
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { LogInSignUp } from "@/mixins/users/LogInSignUp";
 import { auth } from "@/main";
+import router from "@/router";
 
 @Component({
   components: { FBtn, FTextField },
@@ -64,7 +65,7 @@ export default class LogIn extends LogInSignUp {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
           alert("User logged in: " + userCredential.user.email);
-          // todo direct user to home page
+          router.push({ name: "Home" });
         })
         .catch((error) => {
           // const errorCode = error.code;
@@ -78,7 +79,7 @@ export default class LogIn extends LogInSignUp {
       createUserWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
           alert("Created account: " + userCredential.user.email);
-          // todo direct user to home page
+          router.push({ name: "Home" });
         })
         .catch((error) => {
           // const errorCode = error.code;
