@@ -15,4 +15,20 @@ export class LogInSignUp extends Vue {
       v.length >= this.passwordMinLength ||
       "Password must be at least 6 characters",
   ];
+
+  errorAlert(code: string): void {
+    const userNotFound = "auth/user-not-found";
+    const emailInUse = "auth/email-already-in-use";
+
+    switch (code) {
+      case userNotFound:
+        alert("User not found: Try signing up!");
+        break;
+      case emailInUse:
+        alert("User already exists: Try logging in!");
+        break;
+      default:
+        alert("Error: " + code);
+    }
+  }
 }

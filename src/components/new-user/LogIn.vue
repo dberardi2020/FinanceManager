@@ -19,9 +19,17 @@
         :disabled="!isFormValid"
         color="success"
         class="mr-4"
-        @click="validateClicked"
+        @click="logIn"
       >
         Log In
+      </FBtn>
+      <FBtn
+        :disabled="!isFormValid"
+        color="success"
+        class="mr-4"
+        @click="signUp"
+      >
+        Create Account
       </FBtn>
     </v-container>
   </v-form>
@@ -30,7 +38,10 @@
 <script lang="ts">
 import Component from "vue-class-component";
 import { Ref } from "vue-property-decorator";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth } from "@/firebase";
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
@@ -48,7 +59,7 @@ export default class LogIn extends LogInSignUp {
 
   @Ref("form") readonly form: any;
 
-  validateClicked(): void {
+  logIn(): void {
     if (this.form.validate()) {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
@@ -56,9 +67,22 @@ export default class LogIn extends LogInSignUp {
           // todo direct user to home page
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // todo handle error
+          // const errorCode = error.code;
+          this.errorAlert(error.code);
+        });
+    }
+  }
+
+  signUp(): void {
+    if (this.form.validate()) {
+      createUserWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+          alert("Created account: " + userCredential.user.email);
+          // todo direct user to home page
+        })
+        .catch((error) => {
+          // const errorCode = error.code;
+          this.errorAlert(error.code);
         });
     }
   }
