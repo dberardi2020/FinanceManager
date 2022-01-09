@@ -1,25 +1,36 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <div>Finance Manager</div>
-      </div>
+    <v-navigation-drawer v-model="sidebar" app>
+      <v-list>
+        <v-list-item
+          v-for="item in menuItems"
+          :key="item.title"
+          :to="item.path"
+        >
+          <v-list-item-content>{{ item.title }}</v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <!--    <v-app-bar app color="primary" dark>-->
+    <!--      <div class="d-flex align-center">-->
+    <!--        <div>Finance Manager</div>-->
+    <!--      </div>-->
 
-      <v-spacer></v-spacer>
+    <!--      <v-spacer></v-spacer>-->
 
-      <FBtn v-if="!isUserLoggedIn()" text to="login">Log In</FBtn>
+    <!--      <FBtn v-if="!isUserLoggedIn()" text to="login">Log In</FBtn>-->
 
-      <FMenu v-if="isUserLoggedIn()">
-        <template v-slot:hoverItem>
-          <FBtn text>{{ loggedInUserEmail() }}</FBtn>
-        </template>
-        <template v-slot:dropdownItem>
-          <v-list>
-            <v-list-item @click="logout()">Log Out</v-list-item>
-          </v-list>
-        </template>
-      </FMenu>
-    </v-app-bar>
+    <!--      <FMenu v-if="isUserLoggedIn()">-->
+    <!--        <template v-slot:hoverItem>-->
+    <!--          <FBtn text>{{ loggedInUserEmail() }}</FBtn>-->
+    <!--        </template>-->
+    <!--        <template v-slot:dropdownItem>-->
+    <!--          <v-list>-->
+    <!--            <v-list-item @click="logout()">Log Out</v-list-item>-->
+    <!--          </v-list>-->
+    <!--        </template>-->
+    <!--      </FMenu>-->
+    <!--    </v-app-bar>-->
 
     <v-main>
       <router-view />
@@ -64,6 +75,18 @@ export default class App extends Vue {
         // const errorMessage = error.message;
         alert(error.message);
       });
+  }
+
+  data() {
+    return {
+      appTitle: "Finance Manager",
+      sidebar: false,
+      menuItems: [
+        { title: "Home", path: "/" },
+        { title: "Subscriptions", path: "/subscriptions" },
+        { title: "Purchases", path: "/purchases" },
+      ],
+    };
   }
 }
 </script>
