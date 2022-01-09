@@ -28,9 +28,10 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore();
 
-// exports
+// Firebase exports
 export { analytics, auth, db };
 
+// Start Vue instance after firebase auth is checked
 Vue.config.productionTip = false;
 
 checkAuth().then(() => {
