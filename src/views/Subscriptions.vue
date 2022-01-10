@@ -16,8 +16,8 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { addDoc, query, onSnapshot } from "firebase/firestore";
-import Subscription from "@/models/Subscription";
-import { subCollection } from "@/models/Subscription";
+import Subscription from "@/models/Subscription.ts";
+import { subCollection } from "@/models/Subscription.ts";
 
 @Component({
   components: { FBtn },
