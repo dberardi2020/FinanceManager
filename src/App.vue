@@ -1,14 +1,18 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <div>Finance Manager</div>
-      </div>
+      <v-app-bar-title class="mr-4">
+        {{ appTitle }}
+      </v-app-bar-title>
+      <v-toolbar-items>
+        <v-btn text v-for="item in menuItems" :key="item.title" :to="item.path">
+          {{ item.title }}
+        </v-btn>
+      </v-toolbar-items>
 
       <v-spacer></v-spacer>
 
       <FBtn v-if="!isUserLoggedIn()" text to="login">Log In</FBtn>
-
       <FMenu v-if="isUserLoggedIn()">
         <template v-slot:hoverItem>
           <FBtn text>{{ loggedInUserEmail() }}</FBtn>
@@ -44,6 +48,14 @@ const userStore = getModule(UserStore, store);
   components: { FMenu, FBtn },
 })
 export default class App extends Vue {
+  appTitle = "Finance Manager";
+  sidebar = false;
+  menuItems = [
+    { title: "Home", path: "/" },
+    { title: "Subscriptions", path: "/subscriptions" },
+    { title: "Purchases", path: "/purchases" },
+  ];
+
   loggedInUserEmail(): string {
     return userStore.user?.email ?? "";
   }
