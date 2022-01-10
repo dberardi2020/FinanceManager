@@ -65,8 +65,7 @@ export default class Subscriptions extends Vue {
 
   async addData(): Promise<void> {
     try {
-      const docRef = await addDoc(subCollection, this.testSub);
-      console.log("Document written with ID: ", docRef.id);
+      await addDoc(subCollection, this.testSub);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
