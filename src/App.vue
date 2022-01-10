@@ -1,36 +1,29 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="sidebar" app>
-      <v-list>
-        <v-list-item
-          v-for="item in menuItems"
-          :key="item.title"
-          :to="item.path"
-        >
-          <v-list-item-content>{{ item.title }}</v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <!--    <v-app-bar app color="primary" dark>-->
-    <!--      <div class="d-flex align-center">-->
-    <!--        <div>Finance Manager</div>-->
-    <!--      </div>-->
+    <v-app-bar app color="primary" dark>
+      <v-app-bar-title class="mr-4">
+        {{ appTitle }}
+      </v-app-bar-title>
+      <v-toolbar-items>
+        <v-btn text v-for="item in menuItems" :key="item.title" :to="item.path">
+          {{ item.title }}
+        </v-btn>
+      </v-toolbar-items>
 
-    <!--      <v-spacer></v-spacer>-->
+      <v-spacer></v-spacer>
 
-    <!--      <FBtn v-if="!isUserLoggedIn()" text to="login">Log In</FBtn>-->
-
-    <!--      <FMenu v-if="isUserLoggedIn()">-->
-    <!--        <template v-slot:hoverItem>-->
-    <!--          <FBtn text>{{ loggedInUserEmail() }}</FBtn>-->
-    <!--        </template>-->
-    <!--        <template v-slot:dropdownItem>-->
-    <!--          <v-list>-->
-    <!--            <v-list-item @click="logout()">Log Out</v-list-item>-->
-    <!--          </v-list>-->
-    <!--        </template>-->
-    <!--      </FMenu>-->
-    <!--    </v-app-bar>-->
+      <FBtn v-if="!isUserLoggedIn()" text to="login">Log In</FBtn>
+      <FMenu v-if="isUserLoggedIn()">
+        <template v-slot:hoverItem>
+          <FBtn text>{{ loggedInUserEmail() }}</FBtn>
+        </template>
+        <template v-slot:dropdownItem>
+          <v-list>
+            <v-list-item @click="logout()">Log Out</v-list-item>
+          </v-list>
+        </template>
+      </FMenu>
+    </v-app-bar>
 
     <v-main>
       <router-view />
@@ -55,6 +48,14 @@ const userStore = getModule(UserStore, store);
   components: { FMenu, FBtn },
 })
 export default class App extends Vue {
+  appTitle = "Finance Manager";
+  sidebar = false;
+  menuItems = [
+    { title: "Home", path: "/" },
+    { title: "Subscriptions", path: "/subscriptions" },
+    { title: "Purchases", path: "/purchases" },
+  ];
+
   loggedInUserEmail(): string {
     return userStore.user?.email ?? "";
   }
@@ -75,18 +76,6 @@ export default class App extends Vue {
         // const errorMessage = error.message;
         alert(error.message);
       });
-  }
-
-  data() {
-    return {
-      appTitle: "Finance Manager",
-      sidebar: false,
-      menuItems: [
-        { title: "Home", path: "/" },
-        { title: "Subscriptions", path: "/subscriptions" },
-        { title: "Purchases", path: "/purchases" },
-      ],
-    };
   }
 }
 </script>
