@@ -25,7 +25,7 @@
       </FMenu>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="ma-6">
       <router-view />
     </v-main>
   </v-app>
