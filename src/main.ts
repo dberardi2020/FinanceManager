@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
+import "./plugins/v-currency-field";
 import { getModule } from "vuex-module-decorators";
 import { UserStore } from "@/store/UserStore";
 import { initializeApp } from "firebase/app";

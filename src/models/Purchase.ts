@@ -1,7 +1,7 @@
 import { getModule } from "vuex-module-decorators";
 import { UserStore } from "@/store/UserStore";
 import store from "@/store";
-import { addDoc, collection, deleteDoc, getDocs } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/main";
 
 export default class Purchase {
@@ -22,24 +22,11 @@ export default class Purchase {
     this.amount = amount;
   }
 
-  async addData(): Promise<void> {
-    console.log(this);
+  async addToDB(): Promise<void> {
     try {
-      console.log(this);
       await addDoc(purchaseCollection, this);
     } catch (e) {
       console.error("Error adding document: ", e);
-    }
-  }
-
-  async clearData(): Promise<void> {
-    try {
-      const querySnapshot = await getDocs(purchaseCollection);
-      querySnapshot.forEach((doc) => {
-        deleteDoc(doc.ref);
-      });
-    } catch (e) {
-      console.error("Error deleting document: ", e);
     }
   }
 }
