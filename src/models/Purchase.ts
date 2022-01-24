@@ -1,20 +1,19 @@
-import { getModule } from "vuex-module-decorators";
-import { UserStore } from "@/store/UserStore";
-import store from "@/store";
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
+
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/main";
+import { userDataDoc } from "@/models/UserData";
 
 export default class Purchase {
   date: string;
   description: string;
   category: string;
-  amount: number;
+  amount: number | null;
 
   constructor(
     date: string,
     description: string,
     category: string,
-    amount: number
+    amount: number | null
   ) {
     this.date = date;
     this.description = description;
@@ -32,14 +31,13 @@ export default class Purchase {
 }
 
 export const purchaseConverter = {
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   toFirestore: (purchase: Purchase) => ({
     date: purchase.date,
     description: purchase.description,
     category: purchase.category,
     amount: purchase.amount,
   }),
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+
   fromFirestore: (snapshot: any, options: any) => {
     const data = snapshot.data(options);
     return new Purchase(
@@ -51,11 +49,7 @@ export const purchaseConverter = {
   },
 };
 
-const userStore = getModule(UserStore, store);
-const uid = userStore.user?.uid ?? "";
 export const purchaseCollection = collection(
-  db,
-  "users",
-  uid,
+  userDataDoc,
   "purchases"
 ).withConverter(purchaseConverter);
