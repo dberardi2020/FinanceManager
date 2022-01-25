@@ -1,30 +1,136 @@
 <template>
-  <div>
-    <FCard class="pa-4">
-      <h2>Purchase Details</h2>
-      <FDatePicker v-model="datePicker" @change="logDate"></FDatePicker>
-    </FCard>
-  </div>
+  <FCard>
+    <FCardTitle> Purchase Details </FCardTitle>
+    <v-card-text class="py-3 d-flex justify-center">
+      <FDatePicker
+        class="elevation-1"
+        v-model="purchase.date"
+        show-adjacent-months
+        color="#1976d3"
+      ></FDatePicker>
+    </v-card-text>
+    <v-card-text class="pb-1 pt-3 title">Category</v-card-text>
+    <v-card-text class="pt-0 pb-3">
+      <v-chip-group column mandatory v-model="purchase.category">
+        <v-chip
+          v-for="category in categories"
+          :key="category"
+          :value="category"
+          >{{ category }}</v-chip
+        >
+        <v-chip value="Add Category" @click="showDialogue = true">
+          <v-icon left>mdi-pencil-circle</v-icon>Edit Categories</v-chip
+        >
+      </v-chip-group>
+    </v-card-text>
+    <v-form ref="inputs">
+      <v-card-text class="pt-3 pb-0"
+        ><FCurrencyField
+          v-model="purchase.amount"
+          label="Amount"
+          :rules="fieldRequired"
+          @focusout="amountZeroCheck"
+          required
+        ></FCurrencyField
+      ></v-card-text>
+      <v-card-text class="py-0 pb-1">
+        <FTextField
+          v-model="purchase.description"
+          label="Description"
+          :rules="fieldRequired"
+        ></FTextField>
+      </v-card-text>
+    </v-form>
+    <v-card-actions class="justify-end">
+      <FBtn color="error" @click="clear">Clear</FBtn>
+      <FBtn color="success" @click="submit" :disabled="isDisabled()"
+        >Submit</FBtn
+      >
+    </v-card-actions>
+    <v-dialog v-model="showDialogue" width="25%">
+      <CategoryEditor :value="purchaseKey"> </CategoryEditor>
+    </v-dialog>
+  </FCard>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FDatePicker from "@/components/vuetify-component-wrappers/FDatePicker/FDatePicker.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
+import Purchase from "@/models/Purchase";
+import FCurrencyField from "@/components/vuetify-component-wrappers/FCurrencyField/FCurrencyField.vue";
+import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
+import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
+import moment from "moment";
+import { onSnapshot } from "firebase/firestore";
+import { userDataDoc } from "@/models/UserData";
+import CategoryEditor from "@/components/forms/CategoryEditor.vue";
 
 @Component({
-  components: { FBtn, FDatePicker, FCard },
+  components: {
+    CategoryEditor,
+    FCardTitle,
+    FTextField,
+    FCurrencyField,
+    FBtn,
+    FDatePicker,
+    FCard,
+  },
 })
 export default class PurchaseForm extends Vue {
-  datePicker = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+  /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
+
+  @Ref("inputs") readonly inputs!: any;
+  fieldRequired = [(v: never): string | boolean => !!v || "Field is required"];
+  showDialogue = false;
+  purchaseKey = "Purchase";
+
+  currentDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
     .substr(0, 10);
 
-  logDate(): void {
-    console.log(this.datePicker);
+  purchase = new Purchase(this.currentDate, "", "", null);
+
+  categories: string[] = [];
+  unsubscribe = onSnapshot(userDataDoc, (doc) => {
+    this.categories.splice(0);
+    doc.get("categories." + this.purchaseKey)?.forEach((category: string) => {
+      this.categories.push(category);
+    });
+  });
+
+  amountZeroCheck(): void {
+    if (this.purchase.amount == 0) {
+      this.purchase.amount = null;
+    }
+  }
+
+  isDisabled(): boolean {
+    return (
+      this.purchase.amount == null ||
+      this.purchase.description == "" ||
+      this.purchase.category == "Add Category" ||
+      moment(this.purchase.date).isAfter(Date.now())
+    );
+  }
+
+  submit(): void {
+    this.purchase.addToDB();
+    this.clear();
+  }
+
+  clear(): void {
+    this.purchase = new Purchase(this.currentDate, "", "", null);
+    this.inputs.resetValidation();
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+::v-deep .v-chip--active {
+  background-color: #1976d3 !important;
+  color: white;
+  opacity: 1 !important;
+}
+</style>

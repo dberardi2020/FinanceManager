@@ -19,6 +19,7 @@
         </template>
         <template v-slot:dropdownItem>
           <v-list>
+            <v-list-item>Settings</v-list-item>
             <v-list-item @click="logout()">Log Out</v-list-item>
           </v-list>
         </template>

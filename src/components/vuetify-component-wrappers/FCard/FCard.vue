@@ -1,5 +1,5 @@
 <template>
-  <v-card v-bind="$attrs" v-on="$listeners"><slot /></v-card>
+  <v-card class="px-4 pb-2" v-bind="$attrs" v-on="$listeners"><slot /></v-card>
 </template>
 
 <script lang="ts">
