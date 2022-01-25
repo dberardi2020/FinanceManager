@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
+
 import { getModule } from "vuex-module-decorators";
 import { UserStore } from "@/store/UserStore";
 import store from "@/store";
-import { collection } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/main";
 
 export default class Subscription {
   isActive: boolean;
   isWithdrawal: boolean;
   category: string;
-  amount: number;
+  amount: number | null;
   source: string;
   destination: string;
 
@@ -16,7 +18,7 @@ export default class Subscription {
     isActive: boolean,
     isWithdrawal: boolean,
     category: string,
-    amount: number,
+    amount: number | null,
     source: string,
     destination: string
   ) {
@@ -27,10 +29,17 @@ export default class Subscription {
     this.source = source;
     this.destination = destination;
   }
+
+  async addToDB(): Promise<void> {
+    try {
+      await addDoc(subCollection, this);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
 }
 
 export const subConverter = {
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   toFirestore: (sub: Subscription) => ({
     isActive: sub.isActive,
     isWithdrawal: sub.isWithdrawal,
@@ -39,7 +48,6 @@ export const subConverter = {
     source: sub.source,
     destination: sub.destination,
   }),
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   fromFirestore: (snapshot: any, options: any) => {
     const data = snapshot.data(options);
     return new Subscription(
