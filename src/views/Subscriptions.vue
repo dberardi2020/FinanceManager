@@ -1,9 +1,17 @@
 <template>
   <div>
-    <h2 class="mb-6">Welcome to your Subscriptions Page</h2>
-    <FBtn color="success" class="mb-2" @click="addData">Add Data</FBtn>
-    <FBtn color="error" class="mb-2 ml-2" @click="clearData">Clear Data</FBtn>
-    <FDataTable :headers="headers" :items="subs"></FDataTable>
+    <v-row>
+      <v-col cols="3">
+        <SubscriptionForm></SubscriptionForm>
+      </v-col>
+      <v-col cols="9">
+        <FDataTable :headers="headers" :items="subs"></FDataTable>
+        <FBtn class="mt-3 mr-2" color="error" @click="clearData"
+          >Clear Data</FBtn
+        >
+        <FBtn class="mt-3" color="success" @click="addData">Add Data</FBtn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -21,9 +29,20 @@ import {
 import Subscription from "@/models/Subscription.ts";
 import { subCollection } from "@/models/Subscription.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
+import PurchaseForm from "@/components/forms/PurchaseForm.vue";
+import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
+import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
+import SubscriptionForm from "@/components/forms/SubscriptionForm.vue";
 
 @Component({
-  components: { FDataTable, FBtn },
+  components: {
+    SubscriptionForm,
+    FCardTitle,
+    FCard,
+    PurchaseForm,
+    FDataTable,
+    FBtn,
+  },
 })
 export default class Subscriptions extends Vue {
   subs: Subscription[] = [];
@@ -45,16 +64,16 @@ export default class Subscriptions extends Vue {
       value: "category",
     },
     {
-      text: "Amount",
-      value: "amount",
-    },
-    {
       text: "Source",
       value: "source",
     },
     {
       text: "Destination",
       value: "destination",
+    },
+    {
+      text: "Amount",
+      value: "amount",
     },
   ];
 

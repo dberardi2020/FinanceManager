@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2 class="mb-6">Welcome to your Purchases Page</h2>
     <v-row>
       <v-col cols="3">
         <PurchaseForm></PurchaseForm>
