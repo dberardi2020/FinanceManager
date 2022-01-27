@@ -1,5 +1,5 @@
 <template>
-  <FCard>
+  <FCard :elevation="updateMode ? 10 : 2">
     <FCardTitle> Purchase Details </FCardTitle>
     <v-card-text class="py-3 d-flex justify-center">
       <FDatePicker
@@ -24,8 +24,15 @@
       </v-chip-group>
     </v-card-text>
     <v-form ref="inputs">
-      <v-card-text class="pt-3 pb-0"
-        ><FCurrencyField
+      <v-card-text>
+        <FTextField
+          class="pt-0 pb-2"
+          v-model="purchase.description"
+          label="Description"
+          :rules="fieldRequired"
+        ></FTextField>
+        <FCurrencyField
+          class="pt-2 pb-1"
           v-model="purchase.amount"
           label="Amount"
           :rules="fieldRequired"
@@ -33,18 +40,23 @@
           required
         ></FCurrencyField
       ></v-card-text>
-      <v-card-text class="py-0 pb-1">
-        <FTextField
-          v-model="purchase.description"
-          label="Description"
-          :rules="fieldRequired"
-        ></FTextField>
-      </v-card-text>
     </v-form>
     <v-card-actions class="justify-end pl-4 pt-0">
-      <FBtn color="error" @click="clear">Clear</FBtn>
-      <FBtn color="success" @click="submit" :disabled="isDisabled()"
+      <FBtn v-if="updateMode" color="error" @click="clear">Cancel</FBtn>
+      <FBtn v-if="!updateMode" color="error" @click="clear">Clear</FBtn>
+      <FBtn
+        v-if="!updateMode"
+        color="success"
+        @click="submit"
+        :disabled="isDisabled()"
         >Submit</FBtn
+      >
+      <FBtn
+        v-if="updateMode"
+        color="success"
+        @click="update"
+        :disabled="isDisabled()"
+        >Update</FBtn
       >
     </v-card-actions>
     <v-dialog v-model="showDialogue" width="25%">
@@ -85,6 +97,7 @@ export default class PurchaseForm extends Vue {
   fieldRequired = [(v: never): string | boolean => !!v || "Field is required"];
   showDialogue = false;
   purchaseKey = "Purchase";
+  updateMode = false;
 
   currentDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
@@ -120,9 +133,20 @@ export default class PurchaseForm extends Vue {
     this.clear();
   }
 
+  update(): void {
+    this.purchase.updateInDB();
+    this.clear();
+  }
+
   clear(): void {
     this.purchase = new Purchase(this.currentDate, "", "", null);
     this.inputs.resetValidation();
+    this.updateMode = false;
+  }
+
+  fillWith(purchase: Purchase): void {
+    Object.assign(this.purchase, purchase);
+    this.updateMode = true;
   }
 }
 </script>

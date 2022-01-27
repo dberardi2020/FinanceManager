@@ -6,7 +6,15 @@
     class="elevation-2"
     :disable-pagination="true"
     :hide-default-footer="true"
-    ><slot
+  >
+    <template v-for="(_, name) in $slots" v-slot:[name]>
+      <slot :name="name" />
+    </template>
+
+    <template v-for="(_, name) in $scopedSlots" v-slot:[name]="data">
+      <slot :name="name" v-bind="data"></slot>
+    </template>
+    <slot
   /></v-data-table>
 </template>
 
