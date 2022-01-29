@@ -93,6 +93,8 @@ import CategoryEditor from "@/components/forms/CategoryEditor.vue";
   },
 })
 export default class PurchaseForm extends Vue {
+  /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
+
   @Ref("inputs") readonly inputs!: any;
   fieldRequired = [(v: never): string | boolean => !!v || "Field is required"];
   showDialogue = false;

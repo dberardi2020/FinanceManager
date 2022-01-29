@@ -1,14 +1,6 @@
 <template>
-  <FCard>
+  <FCard :elevation="updateMode ? 10 : 2">
     <FCardTitle> Subscription Details </FCardTitle>
-    <!--    <v-card-text class="py-3 d-flex justify-center">-->
-    <!--      <FDatePicker-->
-    <!--        class="elevation-1"-->
-    <!--        v-model="subscription.date"-->
-    <!--        show-adjacent-months-->
-    <!--        color="#1976d3"-->
-    <!--      ></FDatePicker>-->
-    <!--    </v-card-text>-->
     <v-card-text class="pb-1 pt-3 title">Category</v-card-text>
     <v-card-text class="pt-0 pb-3">
       <v-chip-group column mandatory v-model="subscription.category">
@@ -56,10 +48,22 @@
       ></v-checkbox>
       <v-spacer></v-spacer>
     </v-card-actions>
-    <v-card-actions class="justify-end pl-4 pt-1">
-      <FBtn color="error" @click="clear">Clear</FBtn>
-      <FBtn color="success" @click="submit" :disabled="isDisabled()"
+    <v-card-actions class="justify-end pl-4 pt-0">
+      <FBtn v-if="updateMode" color="error" @click="clear">Cancel</FBtn>
+      <FBtn v-if="!updateMode" color="error" @click="clear">Clear</FBtn>
+      <FBtn
+        v-if="!updateMode"
+        color="success"
+        @click="submit"
+        :disabled="isDisabled()"
         >Submit</FBtn
+      >
+      <FBtn
+        v-if="updateMode"
+        color="success"
+        @click="update"
+        :disabled="isDisabled()"
+        >Update</FBtn
       >
     </v-card-actions>
     <v-dialog v-model="showDialogue" width="25%">
@@ -99,10 +103,7 @@ export default class SubscriptionForm extends Vue {
   fieldRequired = [(v: never): string | boolean => !!v || "Field is required"];
   showDialogue = false;
   subscriptionKey = "Subscription";
-
-  // currentDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-  //   .toISOString()
-  //   .substr(0, 10);
+  updateMode = false;
 
   subscription = new Subscription(true, true, "", null, "", "");
 
@@ -137,9 +138,20 @@ export default class SubscriptionForm extends Vue {
     this.clear();
   }
 
+  update(): void {
+    this.subscription.updateInDB();
+    this.clear();
+  }
+
   clear(): void {
     this.subscription = new Subscription(true, true, "", null, "", "");
     this.inputs.resetValidation();
+    this.updateMode = false;
+  }
+
+  fillWith(subscription: Subscription): void {
+    Object.assign(this.subscription, subscription);
+    this.updateMode = true;
   }
 }
 </script>

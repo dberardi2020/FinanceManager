@@ -3,10 +3,13 @@
 import { getModule } from "vuex-module-decorators";
 import { UserStore } from "@/store/UserStore";
 import store from "@/store";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "@/main";
+import { purchaseCollection, purchaseConverter } from "@/models/Purchase";
+import { userDataDoc } from "@/models/UserData";
 
 export default class Subscription {
+  id?: string;
   isActive: boolean;
   isWithdrawal: boolean;
   category: string;
@@ -37,6 +40,25 @@ export default class Subscription {
       console.error("Error adding document: ", e);
     }
   }
+
+  async deleteFromDB(): Promise<void> {
+    try {
+      await deleteDoc(doc(db, subCollection.path, this?.id ?? ""));
+    } catch (e) {
+      console.error("Error deleting document: ", e);
+    }
+  }
+
+  async updateInDB(): Promise<void> {
+    try {
+      await setDoc(
+        doc(db, subCollection.path, this?.id ?? "").withConverter(subConverter),
+        this
+      );
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  }
 }
 
 export const subConverter = {
@@ -61,11 +83,7 @@ export const subConverter = {
   },
 };
 
-const userStore = getModule(UserStore, store);
-const uid = userStore.user?.uid ?? "";
 export const subCollection = collection(
-  db,
-  "users",
-  uid,
+  userDataDoc,
   "subscriptions"
 ).withConverter(subConverter);

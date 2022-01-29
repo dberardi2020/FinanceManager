@@ -32,7 +32,6 @@ export default class Purchase {
   }
 
   async deleteFromDB(): Promise<void> {
-    // console.log(doc(db, purchaseCollection.path, id).path);
     try {
       await deleteDoc(doc(db, purchaseCollection.path, this?.id ?? ""));
     } catch (e) {

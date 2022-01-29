@@ -2,14 +2,35 @@
   <div>
     <v-row>
       <v-col cols="3">
-        <SubscriptionForm></SubscriptionForm>
+        <SubscriptionForm ref="subForm"></SubscriptionForm>
       </v-col>
-      <v-col cols="9">
-        <FDataTable :headers="headers" :items="subs"></FDataTable>
+      <v-col cols="6">
+        <FDataTable :headers="headers" :items="subs">
+          <template v-slot:item.amount="{ item }">
+            {{ "$" + item.amount }}
+          </template>
+          <template v-slot:item.isActive="{ item }">
+            <v-simple-checkbox
+              v-model="item.isActive"
+              v-ripple
+              v-on:click="item.updateInDB()"
+            ></v-simple-checkbox>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="editButtonClicked(item)">
+              mdi-pencil
+            </v-icon>
+            <v-icon small @click="item.deleteFromDB()"> mdi-delete </v-icon>
+          </template>
+        </FDataTable>
         <FBtn class="mt-3 mr-2" color="error" @click="clearData"
           >Clear Data</FBtn
         >
-        <FBtn class="mt-3" color="success" @click="addData">Add Data</FBtn>
+      </v-col>
+      <v-col cols="3">
+        <FCard>
+          <FCardTitle> Totals </FCardTitle>
+        </FCard>
       </v-col>
     </v-row>
   </div>
@@ -33,6 +54,9 @@ import PurchaseForm from "@/components/forms/PurchaseForm.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import SubscriptionForm from "@/components/forms/SubscriptionForm.vue";
+import moment from "moment";
+import Purchase from "@/models/Purchase";
+import { Ref } from "vue-property-decorator";
 
 @Component({
   components: {
@@ -45,53 +69,56 @@ import SubscriptionForm from "@/components/forms/SubscriptionForm.vue";
   },
 })
 export default class Subscriptions extends Vue {
+  @Ref("subForm") readonly subForm!: any;
   subs: Subscription[] = [];
-  testSub = new Subscription(
-    true,
-    true,
-    "Essentials",
-    12.52,
-    "Groceries",
-    "DCU"
-  );
+  tempSub: Subscription | undefined = undefined;
   headers = [
     {
       text: "Active",
       value: "isActive",
+      align: "center",
+      sortable: false,
     },
     {
       text: "Category",
       value: "category",
+      align: "center",
+      sortable: false,
     },
     {
       text: "Source",
       value: "source",
+      align: "center",
+      sortable: false,
     },
     {
       text: "Destination",
       value: "destination",
+      align: "center",
+      sortable: false,
     },
     {
       text: "Amount",
       value: "amount",
+      align: "center",
+      sortable: false,
+    },
+    {
+      text: "Actions",
+      value: "actions",
+      align: "center",
+      sortable: false,
     },
   ];
 
   unsubscribe = onSnapshot(query(subCollection), (querySnapshot) => {
     this.subs.splice(0);
     querySnapshot.forEach((doc) => {
-      this.subs.push(doc.data());
+      this.tempSub = doc.data();
+      this.tempSub.id = doc.id;
+      this.subs.push(this.tempSub);
     });
-    // this.subs.forEach((value) => console.log(value));
   });
-
-  async addData(): Promise<void> {
-    try {
-      await addDoc(subCollection, this.testSub);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-  }
 
   async clearData(): Promise<void> {
     try {
@@ -102,6 +129,10 @@ export default class Subscriptions extends Vue {
     } catch (e) {
       console.error("Error deleting document: ", e);
     }
+  }
+
+  editButtonClicked(item: Purchase): void {
+    this.subForm.fillWith(item);
   }
 }
 </script>
