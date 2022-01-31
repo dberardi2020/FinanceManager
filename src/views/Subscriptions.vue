@@ -36,7 +36,7 @@
       </v-col>
       <v-col cols="3">
         <FCard>
-          <FCardTitle> Categories Breakdown </FCardTitle>
+          <FCardTitle> Subscriptions Breakdown </FCardTitle>
         </FCard>
       </v-col>
     </v-row>
@@ -47,13 +47,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
-import {
-  addDoc,
-  query,
-  onSnapshot,
-  getDocs,
-  deleteDoc,
-} from "firebase/firestore";
+import { query, onSnapshot, getDocs, deleteDoc } from "firebase/firestore";
 import Subscription from "@/models/Subscription.ts";
 import { subCollection } from "@/models/Subscription.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
@@ -61,7 +55,6 @@ import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import SubscriptionForm from "@/components/forms/Subscription/SubscriptionForm.vue";
-import moment from "moment";
 import Purchase from "@/models/Purchase";
 import { Ref } from "vue-property-decorator";
 
@@ -76,6 +69,8 @@ import { Ref } from "vue-property-decorator";
   },
 })
 export default class Subscriptions extends Vue {
+  /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
+
   @Ref("subForm") readonly subForm!: any;
   subs: Subscription[] = [];
   tempSub: Subscription | undefined = undefined;
