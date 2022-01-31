@@ -53,7 +53,7 @@ export default class App extends Vue {
   appTitle = "Finance Manager";
   sidebar = false;
   menuItems = [
-    { title: "Home", path: "/" },
+    // { title: "Home", path: "/" },
     { title: "Subscriptions", path: "/subscriptions" },
     { title: "Purchases", path: "/purchases" },
   ];
