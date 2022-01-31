@@ -23,7 +23,7 @@
       </v-col>
       <v-col cols="3">
         <FCard>
-          <FCardTitle> Category Breakdown </FCardTitle>
+          <FCardTitle> Purchases Breakdown </FCardTitle>
         </FCard>
       </v-col>
     </v-row>
@@ -39,7 +39,7 @@ import Purchase from "@/models/Purchase.ts";
 import { purchaseCollection } from "@/models/Purchase.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
-import PurchaseForm from "@/components/forms/PurchaseForm.vue";
+import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import moment from "moment";
 import { Ref } from "vue-property-decorator";

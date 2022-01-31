@@ -1,23 +1,19 @@
 <template>
   <FCard :elevation="updateMode ? 10 : 2">
-    <FCardTitle> Purchase Details </FCardTitle>
-    <v-card-text class="py-3 d-flex justify-center">
-      <FDatePicker
-        class="elevation-1"
-        v-model="purchase.date"
-        show-adjacent-months
-        color="#1976d3"
-      ></FDatePicker>
-    </v-card-text>
-    <v-card-text class="pb-1 pt-3 title">Category</v-card-text>
-    <v-card-text class="pt-0 pb-3">
-      <v-chip-group column mandatory v-model="purchase.category">
+    <FCardTitle> Subscription Details </FCardTitle>
+    <v-card-text class="pb-1 pt-2 title">Category</v-card-text>
+    <v-card-text class="pt-0 pb-2">
+      <v-chip-group column mandatory v-model="subscription.category">
         <v-chip
           v-for="category in categories"
-          :key="category"
-          :value="category"
-          >{{ category }}</v-chip
+          :key="category.name"
+          :value="category.name"
+          @click="subscription.isWithdrawal = category.isWithdrawal"
         >
+          <v-icon small v-if="category.isWithdrawal" left>mdi-minus</v-icon>
+          <v-icon small v-if="!category.isWithdrawal" left>mdi-plus</v-icon>
+          {{ category.name }}
+        </v-chip>
         <v-chip value="Add Category" @click="showDialogue = true">
           <v-icon left>mdi-pencil-circle</v-icon>Edit Categories</v-chip
         >
@@ -26,22 +22,30 @@
     <v-form ref="inputs">
       <v-card-text>
         <FTextField
-          class="pt-0 pb-2"
-          v-model="purchase.description"
-          label="Description"
+          class="py-2"
+          v-model="subscription.source"
+          label="Source"
+          :rules="fieldRequired"
+        ></FTextField>
+        <FTextField
+          class="py-2"
+          v-model="subscription.destination"
+          label="Destination"
           :rules="fieldRequired"
         ></FTextField>
         <FCurrencyField
-          class="pt-2 pb-1"
-          v-model="purchase.amount"
+          class="pt-2"
+          v-model="subscription.amount"
           label="Amount"
           :rules="fieldRequired"
           @focusout="amountZeroCheck"
           required
-        ></FCurrencyField
-      ></v-card-text>
+        ></FCurrencyField>
+      </v-card-text>
     </v-form>
     <v-card-actions class="justify-end pl-4 pt-0">
+      <v-checkbox v-model="subscription.isActive" label="Active?"></v-checkbox>
+      <v-spacer></v-spacer>
       <FBtn v-if="updateMode" color="error" @click="clear">Cancel</FBtn>
       <FBtn v-if="!updateMode" color="error" @click="clear">Clear</FBtn>
       <FBtn
@@ -60,29 +64,29 @@
       >
     </v-card-actions>
     <v-dialog v-model="showDialogue" width="25%">
-      <CategoryEditor :value="purchaseKey"> </CategoryEditor>
+      <SubscriptionCategoryEditor> </SubscriptionCategoryEditor>
     </v-dialog>
   </FCard>
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
-
 import { Component, Ref, Vue } from "vue-property-decorator";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FDatePicker from "@/components/vuetify-component-wrappers/FDatePicker/FDatePicker.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
-import Purchase from "@/models/Purchase";
 import FCurrencyField from "@/components/vuetify-component-wrappers/FCurrencyField/FCurrencyField.vue";
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
-import moment from "moment";
 import { onSnapshot } from "firebase/firestore";
 import { userDataDoc } from "@/models/UserData";
-import CategoryEditor from "@/components/forms/CategoryEditor.vue";
+import CategoryEditor from "@/components/forms/Purchase/PurchaseCategoryEditor.vue";
+import Subscription from "@/models/Subscription";
+import SubscriptionCategoryEditor from "@/components/forms/Subscription/SubscriptionCategoryEditor.vue";
+import Category, { subscriptionCategories } from "@/models/Category";
 
 @Component({
   components: {
+    SubscriptionCategoryEditor,
     CategoryEditor,
     FCardTitle,
     FTextField,
@@ -92,62 +96,57 @@ import CategoryEditor from "@/components/forms/CategoryEditor.vue";
     FCard,
   },
 })
-export default class PurchaseForm extends Vue {
+export default class SubscriptionForm extends Vue {
   /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
 
   @Ref("inputs") readonly inputs!: any;
   fieldRequired = [(v: never): string | boolean => !!v || "Field is required"];
   showDialogue = false;
-  purchaseKey = "Purchase";
   updateMode = false;
 
-  currentDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-    .toISOString()
-    .substr(0, 10);
+  subscription = new Subscription(true, true, "", null, "", "");
 
-  purchase = new Purchase(this.currentDate, "", "", null);
-
-  categories: string[] = [];
+  categories: Category[] = [];
   unsubscribe = onSnapshot(userDataDoc, (doc) => {
     this.categories.splice(0);
-    doc.get("categories." + this.purchaseKey)?.forEach((category: string) => {
+    doc.get(subscriptionCategories)?.forEach((category: Category) => {
       this.categories.push(category);
     });
   });
 
   amountZeroCheck(): void {
-    if (this.purchase.amount == 0) {
-      this.purchase.amount = null;
+    if (this.subscription.amount == 0) {
+      this.subscription.amount = null;
     }
   }
 
   isDisabled(): boolean {
     return (
-      this.purchase.amount == null ||
-      this.purchase.description == "" ||
-      this.purchase.category == "Add Category" ||
-      moment(this.purchase.date).isAfter(Date.now())
+      this.subscription.amount == null ||
+      this.subscription.source == "" ||
+      this.subscription.destination == "" ||
+      this.subscription.category == "Add Category"
     );
   }
 
   submit(): void {
-    this.purchase.addToDB();
+    this.subscription.addToDB();
     this.clear();
   }
 
   update(): void {
-    this.purchase.updateInDB();
+    this.subscription.updateInDB();
     this.clear();
   }
 
   clear(): void {
-    this.purchase = new Purchase(this.currentDate, "", "", null);
+    this.subscription = new Subscription(true, true, "", null, "", "");
     this.inputs.resetValidation();
     this.updateMode = false;
   }
 
-  fillWith(purchase: Purchase): void {
-    Object.assign(this.purchase, purchase);
+  fillWith(subscription: Subscription): void {
+    Object.assign(this.subscription, subscription);
     this.updateMode = true;
   }
 }

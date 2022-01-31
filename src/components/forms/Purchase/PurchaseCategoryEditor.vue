@@ -1,17 +1,17 @@
 <template>
   <FCard>
-    <FCardTitle class="justify-center">{{ value }} Categories</FCardTitle>
+    <FCardTitle class="justify-center">Purchase Categories</FCardTitle>
     <v-divider class="mb-5"></v-divider>
     <v-card-subtitle v-if="categories.length === 0" class="pa-0 ml-2"
-      >No {{ value }} Categories...</v-card-subtitle
+      >No Purchase Categories...</v-card-subtitle
     >
     <v-chip
       class="ma-1"
       v-for="category in categories"
-      :key="category"
+      :key="category.name"
       close
       @click:close="deleteCategory(category)"
-      >{{ category }}</v-chip
+      >{{ category.name }}</v-chip
     >
     <v-divider class="my-5"></v-divider>
     <FTextField
@@ -40,38 +40,41 @@ import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
+import Category, { purchaseCategories } from "@/models/Category";
 
 @Component({
   components: { FBtn, FTextField, FCardTitle, FCard },
-  props: ["value"],
 })
-export default class CategoryEditor extends Vue {
-  type = this.$props.value;
-  updateField = "categories." + this.type;
-
-  categories: string[] = [];
+export default class PurchaseCategoryEditor extends Vue {
+  categories: Category[] = [];
   categoryField = "";
 
   unsubscribe = onSnapshot(userDataDoc, (doc) => {
     this.categories.splice(0);
-    doc.get("categories." + this.type)?.forEach((category: string) => {
+    doc.get(purchaseCategories)?.forEach((category: Category) => {
       this.categories.push(category);
     });
   });
 
   addCategory(): void {
     if (this.categoryField) {
+      let newCategory: Category = {
+        name: this.categoryField,
+        isWithdrawal: true,
+      };
+
       updateDoc(userDataDoc, {
-        [this.updateField]: arrayUnion(this.categoryField),
+        [purchaseCategories]: arrayUnion(newCategory),
       });
+
       this.categoryField = "";
     }
   }
 
-  deleteCategory(item: string): void {
+  deleteCategory(item: Category): void {
     if (item) {
       updateDoc(userDataDoc, {
-        [this.updateField]: arrayRemove(item),
+        [purchaseCategories]: arrayRemove(item),
       });
     }
   }

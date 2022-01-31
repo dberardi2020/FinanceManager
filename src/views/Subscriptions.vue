@@ -7,7 +7,14 @@
       <v-col cols="6">
         <FDataTable :headers="headers" :items="subs">
           <template v-slot:item.amount="{ item }">
-            {{ "$" + item.amount }}
+            <v-chip :color="item.isWithdrawal ? 'error' : 'success'">
+              {{ "$" + item.amount }}
+            </v-chip>
+          </template>
+          <template v-slot:item.category="{ item }">
+            <v-chip :color="item.isWithdrawal ? 'error' : 'success'">
+              {{ item.category }}
+            </v-chip>
           </template>
           <template v-slot:item.isActive="{ item }">
             <v-simple-checkbox
@@ -29,7 +36,7 @@
       </v-col>
       <v-col cols="3">
         <FCard>
-          <FCardTitle> Totals </FCardTitle>
+          <FCardTitle> Categories Breakdown </FCardTitle>
         </FCard>
       </v-col>
     </v-row>
@@ -50,10 +57,10 @@ import {
 import Subscription from "@/models/Subscription.ts";
 import { subCollection } from "@/models/Subscription.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
-import PurchaseForm from "@/components/forms/PurchaseForm.vue";
+import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
-import SubscriptionForm from "@/components/forms/SubscriptionForm.vue";
+import SubscriptionForm from "@/components/forms/Subscription/SubscriptionForm.vue";
 import moment from "moment";
 import Purchase from "@/models/Purchase";
 import { Ref } from "vue-property-decorator";

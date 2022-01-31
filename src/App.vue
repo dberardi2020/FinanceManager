@@ -49,6 +49,7 @@ const userStore = getModule(UserStore, store);
   components: { FMenu, FBtn },
 })
 export default class App extends Vue {
+  // TODO: Rename to Transaction Tracker
   appTitle = "Finance Manager";
   sidebar = false;
   menuItems = [
