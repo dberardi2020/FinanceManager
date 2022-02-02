@@ -13,7 +13,7 @@
             {{ "$" + item.amount }}
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="editButtonClicked(item)">
+            <v-icon small class="mr-2" @click="editPurchase(item)">
               mdi-pencil
             </v-icon>
             <v-icon small @click="item.deleteFromDB()"> mdi-delete </v-icon>
@@ -108,8 +108,8 @@ export default class Subscriptions extends Vue {
     return moment(date).format("MM/DD/YYYY");
   }
 
-  editButtonClicked(item: Purchase): void {
-    this.purchaseForm.fillWith(item);
+  editPurchase(purchase: Purchase): void {
+    this.purchaseForm.fillWith(purchase);
   }
 }
 </script>

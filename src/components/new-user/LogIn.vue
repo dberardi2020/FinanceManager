@@ -45,8 +45,9 @@ import {
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { LogInSignUp } from "@/mixins/users/LogInSignUp";
-import { auth } from "@/main";
+import { auth, db } from "@/main";
 import router from "@/router";
+import { doc, setDoc } from "firebase/firestore";
 
 @Component({
   components: { FBtn, FTextField },
@@ -78,6 +79,7 @@ export default class LogIn extends LogInSignUp {
     if (this.form.validate()) {
       createUserWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
+          setDoc(doc(db, "users", userCredential.user.uid), {});
           alert("Created account: " + userCredential.user.email);
           router.push({ name: "Home" });
         })
