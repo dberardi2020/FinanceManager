@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
 
-import { getModule } from "vuex-module-decorators";
-import { UserStore } from "@/store/UserStore";
-import store from "@/store";
 import { addDoc, collection, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "@/main";
-import { purchaseCollection, purchaseConverter } from "@/models/Purchase";
 import { userDataDoc } from "@/models/UserData";
 
 export default class Subscription {

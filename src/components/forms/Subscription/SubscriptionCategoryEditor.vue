@@ -38,6 +38,9 @@ import {
   onSnapshot,
   updateDoc,
   arrayRemove,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import Vue from "vue";
 import Component from "vue-class-component";
@@ -46,6 +49,10 @@ import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCard
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import Category, { subscriptionCategories } from "@/models/Category";
+import Subscription, {
+  subCollection,
+  subConverter,
+} from "@/models/Subscription";
 
 @Component({
   components: { FBtn, FTextField, FCardTitle, FCard },
@@ -76,11 +83,20 @@ export default class SubscriptionCategoryEditor extends Vue {
     }
   }
 
-  updateWithdrawal(item: Category): void {
+  async updateWithdrawal(item: Category): Promise<void> {
     if (item) {
       item.isWithdrawal = !item.isWithdrawal;
-      updateDoc(userDataDoc, {
+      await updateDoc(userDataDoc, {
         [subscriptionCategories]: this.categories,
+      });
+
+      const q = query(subCollection, where("category", "==", item.name));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        let sub: Subscription = doc.data();
+        sub.id = doc.id;
+        sub.isWithdrawal = item.isWithdrawal;
+        sub.updateInDB();
       });
     }
   }
