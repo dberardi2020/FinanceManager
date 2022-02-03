@@ -16,7 +16,7 @@
             <v-icon small class="mr-2" @click="editPurchase(item)">
               mdi-pencil
             </v-icon>
-            <v-icon small @click="item.deleteFromDB()"> mdi-delete </v-icon>
+            <v-icon small @click="deletePurchase(item)"> mdi-delete </v-icon>
           </template>
         </FDataTable>
         <FBtn class="mt-3" color="error" @click="clearData">Clear Data</FBtn>
@@ -48,7 +48,7 @@ import { Ref } from "vue-property-decorator";
   components: { FCardTitle, PurchaseForm, FCard, FDataTable, FBtn },
 })
 export default class Subscriptions extends Vue {
-  @Ref("purchaseForm") readonly purchaseForm!: any;
+  @Ref("purchaseForm") readonly purchaseForm!: PurchaseForm;
   purchases: Purchase[] = [];
   tempPurchase: Purchase | undefined = undefined;
   headers = [
@@ -110,6 +110,11 @@ export default class Subscriptions extends Vue {
 
   editPurchase(purchase: Purchase): void {
     this.purchaseForm.fillWith(purchase);
+  }
+
+  deletePurchase(purchase: Purchase): void {
+    purchase.deleteFromDB();
+    this.purchaseForm.purchaseDeletedWithID(purchase.id);
   }
 }
 </script>

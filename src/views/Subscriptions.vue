@@ -24,10 +24,10 @@
             ></v-simple-checkbox>
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="editButtonClicked(item)">
+            <v-icon small class="mr-2" @click="editSub(item)">
               mdi-pencil
             </v-icon>
-            <v-icon small @click="item.deleteFromDB()"> mdi-delete </v-icon>
+            <v-icon small @click="deleteSub(item)"> mdi-delete </v-icon>
           </template>
         </FDataTable>
         <FBtn class="mt-3 mr-2" color="error" @click="clearData"
@@ -55,7 +55,6 @@ import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import SubscriptionForm from "@/components/forms/Subscription/SubscriptionForm.vue";
-import Purchase from "@/models/Purchase";
 import { Ref } from "vue-property-decorator";
 
 @Component({
@@ -71,7 +70,7 @@ import { Ref } from "vue-property-decorator";
 export default class Subscriptions extends Vue {
   /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
 
-  @Ref("subForm") readonly subForm!: any;
+  @Ref("subForm") readonly subForm!: SubscriptionForm;
   subs: Subscription[] = [];
   tempSub: Subscription | undefined = undefined;
   headers = [
@@ -133,8 +132,13 @@ export default class Subscriptions extends Vue {
     }
   }
 
-  editButtonClicked(item: Purchase): void {
-    this.subForm.fillWith(item);
+  editSub(subscription: Subscription): void {
+    this.subForm.fillWith(subscription);
+  }
+
+  deleteSub(subscription: Subscription): void {
+    subscription.deleteFromDB();
+    this.subForm.subDeletedWithID(subscription.id);
   }
 }
 </script>

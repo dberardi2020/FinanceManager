@@ -149,6 +149,12 @@ export default class SubscriptionForm extends Vue {
     Object.assign(this.subscription, subscription);
     this.updateMode = true;
   }
+
+  subDeletedWithID(id: string | undefined): void {
+    if (id != undefined && this.subscription.id == id) {
+      this.clear();
+    }
+  }
 }
 </script>
 

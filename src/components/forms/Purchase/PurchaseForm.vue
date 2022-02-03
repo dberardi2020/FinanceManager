@@ -152,6 +152,12 @@ export default class PurchaseForm extends Vue {
     Object.assign(this.purchase, purchase);
     this.updateMode = true;
   }
+
+  purchaseDeletedWithID(id: string | undefined): void {
+    if (id != undefined && this.purchase.id == id) {
+      this.clear();
+    }
+  }
 }
 </script>
 
