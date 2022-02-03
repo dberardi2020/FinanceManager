@@ -2,7 +2,7 @@
 
 import { addDoc, collection, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "@/main";
-import { userDataDoc } from "@/models/UserData";
+import UserData from "@/models/UserData";
 
 export default class Subscription {
   id?: string;
@@ -31,7 +31,7 @@ export default class Subscription {
 
   async addToDB(): Promise<void> {
     try {
-      await addDoc(subCollection, this);
+      await addDoc(Subscription.subCollection, this);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -39,7 +39,7 @@ export default class Subscription {
 
   async deleteFromDB(): Promise<void> {
     try {
-      await deleteDoc(doc(db, subCollection.path, this?.id ?? ""));
+      await deleteDoc(doc(db, Subscription.subCollection.path, this?.id ?? ""));
     } catch (e) {
       console.error("Error deleting document: ", e);
     }
@@ -48,12 +48,20 @@ export default class Subscription {
   async updateInDB(): Promise<void> {
     try {
       await setDoc(
-        doc(db, subCollection.path, this?.id ?? "").withConverter(subConverter),
+        doc(db, Subscription.subCollection.path, this?.id ?? "").withConverter(
+          subConverter
+        ),
         this
       );
     } catch (e) {
       console.error("Error updating document: ", e);
     }
+  }
+
+  static get subCollection(): any {
+    return collection(UserData.userDataDoc, "subscriptions").withConverter(
+      subConverter
+    );
   }
 }
 
@@ -78,8 +86,3 @@ export const subConverter = {
     );
   },
 };
-
-export const subCollection = collection(
-  userDataDoc,
-  "subscriptions"
-).withConverter(subConverter);

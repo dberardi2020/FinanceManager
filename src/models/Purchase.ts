@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
 
 import { addDoc, collection, deleteDoc, setDoc, doc } from "firebase/firestore";
-import { userDataDoc } from "@/models/UserData";
 import { db } from "@/main";
+import UserData from "@/models/UserData";
 
 export default class Purchase {
   id?: string;
@@ -25,7 +25,7 @@ export default class Purchase {
 
   async addToDB(): Promise<void> {
     try {
-      await addDoc(purchaseCollection, this);
+      await addDoc(Purchase.purchaseCollection, this);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -33,7 +33,9 @@ export default class Purchase {
 
   async deleteFromDB(): Promise<void> {
     try {
-      await deleteDoc(doc(db, purchaseCollection.path, this?.id ?? ""));
+      await deleteDoc(
+        doc(db, Purchase.purchaseCollection.path, this?.id ?? "")
+      );
     } catch (e) {
       console.error("Error deleting document: ", e);
     }
@@ -42,7 +44,7 @@ export default class Purchase {
   async updateInDB(): Promise<void> {
     try {
       await setDoc(
-        doc(db, purchaseCollection.path, this?.id ?? "").withConverter(
+        doc(db, Purchase.purchaseCollection.path, this?.id ?? "").withConverter(
           purchaseConverter
         ),
         this
@@ -50,6 +52,12 @@ export default class Purchase {
     } catch (e) {
       console.error("Error updating document: ", e);
     }
+  }
+
+  static get purchaseCollection(): any {
+    return collection(UserData.userDataDoc, "purchases").withConverter(
+      purchaseConverter
+    );
   }
 }
 
@@ -71,8 +79,3 @@ export const purchaseConverter = {
     );
   },
 };
-
-export const purchaseCollection = collection(
-  userDataDoc,
-  "purchases"
-).withConverter(purchaseConverter);

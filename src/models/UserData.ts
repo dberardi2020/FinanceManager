@@ -5,5 +5,13 @@ import { doc } from "firebase/firestore";
 import { db } from "@/main";
 
 const userStore = getModule(UserStore, store);
-const uid = userStore.user?.uid ?? "";
-export const userDataDoc = doc(db, "users", uid);
+
+export default class UserData {
+  static get uid(): string {
+    return userStore.user?.uid ?? "";
+  }
+
+  static get userDataDoc(): any {
+    return doc(db, "users", this.uid);
+  }
+}

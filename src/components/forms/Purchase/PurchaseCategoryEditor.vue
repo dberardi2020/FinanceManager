@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { userDataDoc } from "@/models/UserData";
+import UserData from "@/models/UserData";
 import {
   arrayUnion,
   onSnapshot,
@@ -49,7 +49,7 @@ export default class PurchaseCategoryEditor extends Vue {
   categories: Category[] = [];
   categoryField = "";
 
-  unsubscribe = onSnapshot(userDataDoc, (doc) => {
+  unsubscribe = onSnapshot(UserData.userDataDoc, (doc: any) => {
     this.categories.splice(0);
     doc.get(purchaseCategories)?.forEach((category: Category) => {
       this.categories.push(category);
@@ -63,7 +63,7 @@ export default class PurchaseCategoryEditor extends Vue {
         isWithdrawal: true,
       };
 
-      updateDoc(userDataDoc, {
+      updateDoc(UserData.userDataDoc, {
         [purchaseCategories]: arrayUnion(newCategory),
       });
 
@@ -73,7 +73,7 @@ export default class PurchaseCategoryEditor extends Vue {
 
   deleteCategory(item: Category): void {
     if (item) {
-      updateDoc(userDataDoc, {
+      updateDoc(UserData.userDataDoc, {
         [purchaseCategories]: arrayRemove(item),
       });
     }

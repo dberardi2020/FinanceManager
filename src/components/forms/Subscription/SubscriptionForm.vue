@@ -78,7 +78,7 @@ import FCurrencyField from "@/components/vuetify-component-wrappers/FCurrencyFie
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import { onSnapshot } from "firebase/firestore";
-import { userDataDoc } from "@/models/UserData";
+import UserData from "@/models/UserData";
 import CategoryEditor from "@/components/forms/Purchase/PurchaseCategoryEditor.vue";
 import Subscription from "@/models/Subscription";
 import SubscriptionCategoryEditor from "@/components/forms/Subscription/SubscriptionCategoryEditor.vue";
@@ -107,7 +107,7 @@ export default class SubscriptionForm extends Vue {
   subscription = new Subscription(true, true, "", null, "", "");
 
   categories: Category[] = [];
-  unsubscribe = onSnapshot(userDataDoc, (doc) => {
+  unsubscribe = onSnapshot(UserData.userDataDoc, (doc: any) => {
     this.categories.splice(0);
     doc.get(subscriptionCategories)?.forEach((category: Category) => {
       this.categories.push(category);
