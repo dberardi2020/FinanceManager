@@ -148,15 +148,17 @@ export default class PurchaseForm extends Vue {
     this.updateMode = false;
   }
 
-  fillWith(purchase: Purchase): void {
-    Object.assign(this.purchase, purchase);
-    this.updateMode = true;
-  }
+  mounted() {
+    this.$root.$on("editPurchase", (purchase: Purchase) => {
+      Object.assign(this.purchase, purchase);
+      this.updateMode = true;
+    });
 
-  purchaseDeletedWithID(id: string | undefined): void {
-    if (id != undefined && this.purchase.id == id) {
-      this.clear();
-    }
+    this.$root.$on("purchaseDeletedWithID", (id: string | undefined) => {
+      if (id != undefined && this.purchase.id == id) {
+        this.clear();
+      }
+    });
   }
 }
 </script>

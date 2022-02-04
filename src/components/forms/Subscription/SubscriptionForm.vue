@@ -145,15 +145,17 @@ export default class SubscriptionForm extends Vue {
     this.updateMode = false;
   }
 
-  fillWith(subscription: Subscription): void {
-    Object.assign(this.subscription, subscription);
-    this.updateMode = true;
-  }
+  mounted() {
+    this.$root.$on("editSubscription", (subscription: Subscription) => {
+      Object.assign(this.subscription, subscription);
+      this.updateMode = true;
+    });
 
-  subDeletedWithID(id: string | undefined): void {
-    if (id != undefined && this.subscription.id == id) {
-      this.clear();
-    }
+    this.$root.$on("subscriptionDeletedWithID", (id: string | undefined) => {
+      if (id != undefined && this.subscription.id == id) {
+        this.clear();
+      }
+    });
   }
 }
 </script>
