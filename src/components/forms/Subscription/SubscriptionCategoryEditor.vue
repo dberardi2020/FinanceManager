@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { userDataDoc } from "@/models/UserData";
+import UserData from "@/models/UserData";
 import {
   arrayUnion,
   onSnapshot,
@@ -49,10 +49,7 @@ import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCard
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import Category, { subscriptionCategories } from "@/models/Category";
-import Subscription, {
-  subCollection,
-  subConverter,
-} from "@/models/Subscription";
+import Subscription from "@/models/Subscription";
 
 @Component({
   components: { FBtn, FTextField, FCardTitle, FCard },
@@ -61,7 +58,7 @@ export default class SubscriptionCategoryEditor extends Vue {
   categories: Category[] = [];
   categoryField = "";
 
-  unsubscribe = onSnapshot(userDataDoc, (doc) => {
+  unsubscribe = onSnapshot(UserData.userDataDoc, (doc: any) => {
     this.categories.splice(0);
     doc.get(subscriptionCategories)?.forEach((category: Category) => {
       this.categories.push(category);
@@ -75,7 +72,7 @@ export default class SubscriptionCategoryEditor extends Vue {
         isWithdrawal: true,
       };
 
-      updateDoc(userDataDoc, {
+      updateDoc(UserData.userDataDoc, {
         [subscriptionCategories]: arrayUnion(newCategory),
       });
 
@@ -86,24 +83,29 @@ export default class SubscriptionCategoryEditor extends Vue {
   async updateWithdrawal(item: Category): Promise<void> {
     if (item) {
       item.isWithdrawal = !item.isWithdrawal;
-      await updateDoc(userDataDoc, {
+      await updateDoc(UserData.userDataDoc, {
         [subscriptionCategories]: this.categories,
       });
 
-      const q = query(subCollection, where("category", "==", item.name));
+      const q = query(
+        Subscription.subCollection,
+        where("category", "==", item.name)
+      );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        let sub: Subscription = doc.data();
-        sub.id = doc.id;
-        sub.isWithdrawal = item.isWithdrawal;
-        sub.updateInDB();
+        let sub: Subscription | unknown = doc.data();
+        if (sub instanceof Subscription) {
+          sub.id = doc.id;
+          sub.isWithdrawal = item.isWithdrawal;
+          sub.updateInDB();
+        }
       });
     }
   }
 
   deleteCategory(item: Category): void {
     if (item) {
-      updateDoc(userDataDoc, {
+      updateDoc(UserData.userDataDoc, {
         [subscriptionCategories]: arrayRemove(item),
       });
     }

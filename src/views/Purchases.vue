@@ -36,7 +36,6 @@ import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { query, onSnapshot, getDocs, deleteDoc } from "firebase/firestore";
 import Purchase from "@/models/Purchase.ts";
-import { purchaseCollection } from "@/models/Purchase.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
@@ -50,7 +49,7 @@ import { Ref } from "vue-property-decorator";
 export default class Subscriptions extends Vue {
   @Ref("purchaseForm") readonly purchaseForm!: PurchaseForm;
   purchases: Purchase[] = [];
-  tempPurchase: Purchase | undefined = undefined;
+  tempPurchase: Purchase | undefined | unknown = undefined;
   headers = [
     {
       text: "Date",
@@ -84,18 +83,23 @@ export default class Subscriptions extends Vue {
     },
   ];
 
-  unsubscribe = onSnapshot(query(purchaseCollection), (querySnapshot) => {
-    this.purchases.splice(0);
-    querySnapshot.forEach((doc) => {
-      this.tempPurchase = doc.data();
-      this.tempPurchase.id = doc.id;
-      this.purchases.push(this.tempPurchase);
-    });
-  });
+  unsubscribe = onSnapshot(
+    query(Purchase.purchaseCollection),
+    (querySnapshot) => {
+      this.purchases.splice(0);
+      querySnapshot.forEach((doc) => {
+        this.tempPurchase = doc.data();
+        if (this.tempPurchase instanceof Purchase) {
+          this.tempPurchase.id = doc.id;
+          this.purchases.push(this.tempPurchase);
+        }
+      });
+    }
+  );
 
   async clearData(): Promise<void> {
     try {
-      const querySnapshot = await getDocs(purchaseCollection);
+      const querySnapshot = await getDocs(Purchase.purchaseCollection);
       querySnapshot.forEach((doc) => {
         deleteDoc(doc.ref);
       });

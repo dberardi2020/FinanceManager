@@ -49,7 +49,6 @@ import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { query, onSnapshot, getDocs, deleteDoc } from "firebase/firestore";
 import Subscription from "@/models/Subscription.ts";
-import { subCollection } from "@/models/Subscription.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
@@ -72,7 +71,7 @@ export default class Subscriptions extends Vue {
 
   @Ref("subForm") readonly subForm!: SubscriptionForm;
   subs: Subscription[] = [];
-  tempSub: Subscription | undefined = undefined;
+  tempSub: Subscription | undefined | unknown = undefined;
   headers = [
     {
       text: "Active",
@@ -112,18 +111,23 @@ export default class Subscriptions extends Vue {
     },
   ];
 
-  unsubscribe = onSnapshot(query(subCollection), (querySnapshot) => {
-    this.subs.splice(0);
-    querySnapshot.forEach((doc) => {
-      this.tempSub = doc.data();
-      this.tempSub.id = doc.id;
-      this.subs.push(this.tempSub);
-    });
-  });
+  unsubscribe = onSnapshot(
+    query(Subscription.subCollection),
+    (querySnapshot) => {
+      this.subs.splice(0);
+      querySnapshot.forEach((doc) => {
+        this.tempSub = doc.data();
+        if (this.tempSub instanceof Subscription) {
+          this.tempSub.id = doc.id;
+          this.subs.push(this.tempSub);
+        }
+      });
+    }
+  );
 
   async clearData(): Promise<void> {
     try {
-      const querySnapshot = await getDocs(subCollection);
+      const querySnapshot = await getDocs(Subscription.subCollection);
       querySnapshot.forEach((doc) => {
         deleteDoc(doc.ref);
       });
