@@ -23,7 +23,6 @@
         <v-icon small @click="deleteSub(item)"> mdi-delete </v-icon>
       </template>
     </FDataTable>
-    <FBtn class="mt-3 mr-2" color="error" @click="clearData">Clear Data</FBtn>
   </div>
 </template>
 
@@ -31,7 +30,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
-import { query, onSnapshot, getDocs, deleteDoc } from "firebase/firestore";
+import { query, onSnapshot } from "firebase/firestore";
 import Subscription from "@/models/Subscription.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
@@ -108,24 +107,21 @@ export default class SubscriptionTable extends Vue {
     }
   );
 
-  async clearData(): Promise<void> {
-    try {
-      const querySnapshot = await getDocs(Subscription.subCollection);
-      querySnapshot.forEach((doc) => {
-        deleteDoc(doc.ref);
-      });
-    } catch (e) {
-      console.error("Error deleting document: ", e);
-    }
-  }
-
   editSub(subscription: Subscription): void {
     this.$root.$emit("editSubscription", subscription);
   }
 
   deleteSub(subscription: Subscription): void {
-    subscription.deleteFromDB();
-    this.$root.$emit("subscriptionDeletedWithID", subscription.id);
+    this.$confirm("This action cannot be undone", "Are you sure?", "warning", {
+      reverseButtons: true,
+    })
+      .then(() => {
+        subscription.deleteFromDB();
+        this.$root.$emit("subscriptionDeletedWithID", subscription.id);
+      })
+      .catch(() => {
+        return;
+      });
   }
 }
 </script>

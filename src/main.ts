@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
+import VueSimpleAlert from "vue-simple-alert";
 import "./plugins/v-currency-field";
 import { getModule } from "vuex-module-decorators";
 import { UserStore } from "@/store/UserStore";
@@ -34,6 +35,8 @@ export { analytics, auth, db };
 
 // Start Vue instance after firebase auth is checked
 Vue.config.productionTip = false;
+
+Vue.use(VueSimpleAlert);
 
 checkAuth().then(() => {
   new Vue({

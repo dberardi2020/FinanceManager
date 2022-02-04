@@ -14,7 +14,6 @@
         <v-icon small @click="deletePurchase(item)"> mdi-delete </v-icon>
       </template>
     </FDataTable>
-    <FBtn class="mt-3" color="error" @click="clearData">Clear Data</FBtn>
   </div>
 </template>
 
@@ -22,7 +21,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
-import { query, onSnapshot, getDocs, deleteDoc } from "firebase/firestore";
+import { query, onSnapshot } from "firebase/firestore";
 import Purchase from "@/models/Purchase.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
@@ -83,17 +82,6 @@ export default class PurchaseTable extends Vue {
     }
   );
 
-  async clearData(): Promise<void> {
-    try {
-      const querySnapshot = await getDocs(Purchase.purchaseCollection);
-      querySnapshot.forEach((doc) => {
-        deleteDoc(doc.ref);
-      });
-    } catch (e) {
-      console.error("Error deleting document: ", e);
-    }
-  }
-
   formatDate(date: string): string {
     return moment(date).format("MM/DD/YYYY");
   }
@@ -103,8 +91,16 @@ export default class PurchaseTable extends Vue {
   }
 
   deletePurchase(purchase: Purchase): void {
-    purchase.deleteFromDB();
-    this.$root.$emit("purchaseDeletedWithID", purchase.id);
+    this.$confirm("This action cannot be undone", "Are you sure?", "warning", {
+      reverseButtons: true,
+    })
+      .then(() => {
+        purchase.deleteFromDB();
+        this.$root.$emit("purchaseDeletedWithID", purchase.id);
+      })
+      .catch(() => {
+        return;
+      });
   }
 }
 </script>
