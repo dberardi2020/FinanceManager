@@ -27,6 +27,8 @@ import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FData
 import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
 import moment from "moment";
 import { Ref } from "vue-property-decorator";
+import firebase from "firebase/compat";
+import Unsubscribe = firebase.Unsubscribe;
 
 @Component({
   components: { PurchaseForm, FDataTable, FBtn },
@@ -68,19 +70,7 @@ export default class PurchaseTable extends Vue {
     },
   ];
 
-  unsubscribe = onSnapshot(
-    query(Purchase.purchaseCollection),
-    (querySnapshot) => {
-      this.purchases.splice(0);
-      querySnapshot.forEach((doc) => {
-        this.tempPurchase = doc.data();
-        if (this.tempPurchase instanceof Purchase) {
-          this.tempPurchase.id = doc.id;
-          this.purchases.push(this.tempPurchase);
-        }
-      });
-    }
-  );
+  unsubscribe: Unsubscribe | null = null;
 
   formatDate(date: string): string {
     return moment(date).format("MM/DD/YYYY");
@@ -101,6 +91,23 @@ export default class PurchaseTable extends Vue {
       .catch(() => {
         return;
       });
+  }
+
+  mounted(): void {
+    this.unsubscribe = this.handleSnapshot();
+  }
+
+  handleSnapshot(): Unsubscribe {
+    return onSnapshot(query(Purchase.purchaseCollection), (querySnapshot) => {
+      this.purchases.splice(0);
+      querySnapshot.forEach((doc) => {
+        this.tempPurchase = doc.data();
+        if (this.tempPurchase instanceof Purchase) {
+          this.tempPurchase.id = doc.id;
+          this.purchases.push(this.tempPurchase);
+        }
+      });
+    });
   }
 }
 </script>

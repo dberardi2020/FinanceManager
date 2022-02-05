@@ -37,6 +37,8 @@ import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import SubscriptionForm from "@/components/forms/Subscription/SubscriptionForm.vue";
 import { Ref } from "vue-property-decorator";
+import firebase from "firebase/compat";
+import Unsubscribe = firebase.Unsubscribe;
 
 @Component({
   components: {
@@ -93,19 +95,7 @@ export default class SubscriptionTable extends Vue {
     },
   ];
 
-  unsubscribe = onSnapshot(
-    query(Subscription.subCollection),
-    (querySnapshot) => {
-      this.subs.splice(0);
-      querySnapshot.forEach((doc) => {
-        this.tempSub = doc.data();
-        if (this.tempSub instanceof Subscription) {
-          this.tempSub.id = doc.id;
-          this.subs.push(this.tempSub);
-        }
-      });
-    }
-  );
+  unsubscribe: Unsubscribe | null = null;
 
   editSub(subscription: Subscription): void {
     this.$root.$emit("editSubscription", subscription);
@@ -122,6 +112,23 @@ export default class SubscriptionTable extends Vue {
       .catch(() => {
         return;
       });
+  }
+
+  mounted(): void {
+    this.unsubscribe = this.handleSnapshot();
+  }
+
+  handleSnapshot(): Unsubscribe {
+    return onSnapshot(query(Subscription.subCollection), (querySnapshot) => {
+      this.subs.splice(0);
+      querySnapshot.forEach((doc) => {
+        this.tempSub = doc.data();
+        if (this.tempSub instanceof Subscription) {
+          this.tempSub.id = doc.id;
+          this.subs.push(this.tempSub);
+        }
+      });
+    });
   }
 }
 </script>

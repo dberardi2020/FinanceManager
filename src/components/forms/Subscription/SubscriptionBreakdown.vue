@@ -44,36 +44,37 @@ export default class SubscriptionBreakdown extends Vue {
   inactiveTotal = 0;
   combinedTotal = 0;
 
-  unsubscribe: Unsubscribe | number = 0;
+  unsubscribe: Unsubscribe | null = null;
 
   mounted(): void {
-    this.unsubscribe = onSnapshot(
-      query(Subscription.subCollection),
-      (querySnapshot) => {
-        this.resetTotals();
-        querySnapshot.forEach((doc) => {
-          let subscription = doc.data();
-          if (subscription instanceof Subscription && subscription.amount) {
-            let amount =
-              subscription.amount * (subscription.isWithdrawal ? -1 : 1);
-
-            if (subscription.isActive) {
-              this.activeTotal += amount;
-            } else {
-              this.inactiveTotal += amount;
-            }
-
-            this.combinedTotal = this.activeTotal + this.inactiveTotal;
-          }
-        });
-      }
-    );
+    this.unsubscribe = this.handleSnapshot();
   }
 
   resetTotals(): void {
     this.activeTotal = 0;
     this.inactiveTotal = 0;
     this.combinedTotal = 0;
+  }
+
+  handleSnapshot(): Unsubscribe {
+    return onSnapshot(query(Subscription.subCollection), (querySnapshot) => {
+      this.resetTotals();
+      querySnapshot.forEach((doc) => {
+        let subscription = doc.data();
+        if (subscription instanceof Subscription && subscription.amount) {
+          let amount =
+            subscription.amount * (subscription.isWithdrawal ? -1 : 1);
+
+          if (subscription.isActive) {
+            this.activeTotal += amount;
+          } else {
+            this.inactiveTotal += amount;
+          }
+
+          this.combinedTotal = this.activeTotal + this.inactiveTotal;
+        }
+      });
+    });
   }
 }
 </script>

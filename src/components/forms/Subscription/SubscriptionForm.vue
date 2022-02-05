@@ -83,6 +83,8 @@ import CategoryEditor from "@/components/forms/Purchase/PurchaseCategoryEditor.v
 import Subscription from "@/models/Subscription";
 import SubscriptionCategoryEditor from "@/components/forms/Subscription/SubscriptionCategoryEditor.vue";
 import Category, { subscriptionCategories } from "@/models/Category";
+import firebase from "firebase/compat";
+import Unsubscribe = firebase.Unsubscribe;
 
 @Component({
   components: {
@@ -107,12 +109,7 @@ export default class SubscriptionForm extends Vue {
   subscription = new Subscription(true, true, "", null, "", "");
 
   categories: Category[] = [];
-  unsubscribe = onSnapshot(UserData.userDataDoc, (doc: any) => {
-    this.categories.splice(0);
-    doc.get(subscriptionCategories)?.forEach((category: Category) => {
-      this.categories.push(category);
-    });
-  });
+  unsubscribe: Unsubscribe | null = null;
 
   amountZeroCheck(): void {
     if (this.subscription.amount == 0) {
@@ -146,6 +143,8 @@ export default class SubscriptionForm extends Vue {
   }
 
   mounted() {
+    this.unsubscribe = this.handleSnapshot();
+
     this.$root.$on("editSubscription", (subscription: Subscription) => {
       Object.assign(this.subscription, subscription);
       this.updateMode = true;
@@ -155,6 +154,15 @@ export default class SubscriptionForm extends Vue {
       if (id != undefined && this.subscription.id == id) {
         this.clear();
       }
+    });
+  }
+
+  handleSnapshot(): Unsubscribe {
+    return onSnapshot(UserData.userDataDoc, (doc: any) => {
+      this.categories.splice(0);
+      doc.get(subscriptionCategories)?.forEach((category: Category) => {
+        this.categories.push(category);
+      });
     });
   }
 }
