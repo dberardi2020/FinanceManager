@@ -8,9 +8,7 @@
         <SubscriptionTable></SubscriptionTable>
       </v-col>
       <v-col cols="3">
-        <FCard>
-          <FCardTitle> Subscriptions Breakdown </FCardTitle>
-        </FCard>
+        <SubscriptionBreakdown></SubscriptionBreakdown>
       </v-col>
     </v-row>
   </div>
@@ -23,9 +21,11 @@ import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import SubscriptionForm from "@/components/forms/Subscription/SubscriptionForm.vue";
 import SubscriptionTable from "@/components/forms/Subscription/SubscriptionTable.vue";
+import SubscriptionBreakdown from "@/components/forms/Subscription/SubscriptionBreakdown.vue";
 
 @Component({
   components: {
+    SubscriptionBreakdown,
     SubscriptionTable,
     SubscriptionForm,
     FCardTitle,
