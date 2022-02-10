@@ -15,7 +15,8 @@
           {{ category.name }}
         </v-chip>
         <v-chip value="Add Category" @click="showDialogue = true">
-          <v-icon left>mdi-pencil-circle</v-icon>Edit Categories</v-chip
+          <v-icon left color="white">mdi-pencil-circle</v-icon>Edit
+          Categories</v-chip
         >
       </v-chip-group>
     </v-card-text>
