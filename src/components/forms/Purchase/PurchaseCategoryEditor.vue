@@ -41,6 +41,8 @@ import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCard
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import Category, { purchaseCategories } from "@/models/Category";
+import firebase from "firebase/compat";
+import Unsubscribe = firebase.Unsubscribe;
 
 @Component({
   components: { FBtn, FTextField, FCardTitle, FCard },
@@ -49,12 +51,11 @@ export default class PurchaseCategoryEditor extends Vue {
   categories: Category[] = [];
   categoryField = "";
 
-  unsubscribe = onSnapshot(UserData.userDataDoc, (doc: any) => {
-    this.categories.splice(0);
-    doc.get(purchaseCategories)?.forEach((category: Category) => {
-      this.categories.push(category);
-    });
-  });
+  unsubscribe: Unsubscribe | null = null;
+
+  mounted(): void {
+    this.unsubscribe = this.handleSnapshot();
+  }
 
   addCategory(): void {
     if (this.categoryField) {
@@ -77,6 +78,15 @@ export default class PurchaseCategoryEditor extends Vue {
         [purchaseCategories]: arrayRemove(item),
       });
     }
+  }
+
+  handleSnapshot(): Unsubscribe {
+    return onSnapshot(UserData.userDataDoc, (doc: any) => {
+      this.categories.splice(0);
+      doc.get(purchaseCategories)?.forEach((category: Category) => {
+        this.categories.push(category);
+      });
+    });
   }
 }
 </script>

@@ -50,6 +50,8 @@ import FTextField from "@/components/vuetify-component-wrappers/FTextField/FText
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import Category, { subscriptionCategories } from "@/models/Category";
 import Subscription from "@/models/Subscription";
+import firebase from "firebase/compat";
+import Unsubscribe = firebase.Unsubscribe;
 
 @Component({
   components: { FBtn, FTextField, FCardTitle, FCard },
@@ -58,12 +60,7 @@ export default class SubscriptionCategoryEditor extends Vue {
   categories: Category[] = [];
   categoryField = "";
 
-  unsubscribe = onSnapshot(UserData.userDataDoc, (doc: any) => {
-    this.categories.splice(0);
-    doc.get(subscriptionCategories)?.forEach((category: Category) => {
-      this.categories.push(category);
-    });
-  });
+  unsubscribe: Unsubscribe | null = null;
 
   addCategory(): void {
     if (this.categoryField) {
@@ -109,6 +106,19 @@ export default class SubscriptionCategoryEditor extends Vue {
         [subscriptionCategories]: arrayRemove(item),
       });
     }
+  }
+
+  mounted(): void {
+    this.unsubscribe = this.handleSnapshot();
+  }
+
+  handleSnapshot(): Unsubscribe {
+    return onSnapshot(UserData.userDataDoc, (doc: any) => {
+      this.categories.splice(0);
+      doc.get(subscriptionCategories)?.forEach((category: Category) => {
+        this.categories.push(category);
+      });
+    });
   }
 }
 </script>
