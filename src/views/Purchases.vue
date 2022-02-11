@@ -8,9 +8,7 @@
         <PurchaseTable></PurchaseTable>
       </v-col>
       <v-col cols="3">
-        <FCard>
-          <FCardTitle> Purchases Breakdown </FCardTitle>
-        </FCard>
+        <PurchaseBreakdown></PurchaseBreakdown>
       </v-col>
     </v-row>
   </div>
@@ -23,9 +21,11 @@ import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import PurchaseTable from "@/components/forms/Purchase/PurchaseTable.vue";
+import PurchaseBreakdown from "@/components/forms/Purchase/PurchaseBreakdown.vue";
 
 @Component({
   components: {
+    PurchaseBreakdown,
     PurchaseTable,
     FCardTitle,
     PurchaseForm,

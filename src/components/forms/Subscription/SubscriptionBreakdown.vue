@@ -3,23 +3,32 @@
     <FCard>
       <FCardTitle>Subscriptions Breakdown</FCardTitle>
       <v-divider></v-divider>
-      <v-col>
-        <v-row>
-          <v-card-title>Active Total</v-card-title>
-          <v-spacer></v-spacer>
-          <v-card-title>${{ this.activeTotal.toFixed(2) }}</v-card-title>
-        </v-row>
-        <v-row>
-          <v-card-title>Inactive Total</v-card-title>
-          <v-spacer></v-spacer>
-          <v-card-title>${{ this.inactiveTotal.toFixed(2) }}</v-card-title>
-        </v-row>
-        <v-row>
-          <v-card-title>Combined Total</v-card-title>
-          <v-spacer></v-spacer>
-          <v-card-title>${{ this.combinedTotal.toFixed(2) }}</v-card-title>
-        </v-row>
-      </v-col>
+      <v-row>
+        <v-card-title>Active Total</v-card-title>
+        <v-spacer></v-spacer>
+        <v-card-title
+          >${{ this.totalsBreakdown.active.toFixed(2) }}</v-card-title
+        >
+      </v-row>
+      <v-row>
+        <v-card-title>Inactive Total</v-card-title>
+        <v-spacer></v-spacer>
+        <v-card-title
+          >${{ this.totalsBreakdown.inactive.toFixed(2) }}</v-card-title
+        >
+      </v-row>
+      <v-row>
+        <v-card-title>Combined Total</v-card-title>
+        <v-spacer></v-spacer>
+        <v-card-title
+          >${{ this.totalsBreakdown.combined.toFixed(2) }}</v-card-title
+        >
+      </v-row>
+      <v-row v-for="[key, value] in this.categoriesBreakdown" :key="key">
+        <v-card-title>{{ key }}</v-card-title>
+        <v-spacer></v-spacer>
+        <v-card-title>${{ value.toFixed(2) }}</v-card-title>
+      </v-row>
     </FCard>
   </div>
 </template>
@@ -40,10 +49,8 @@ import Unsubscribe = firebase.Unsubscribe;
   },
 })
 export default class SubscriptionBreakdown extends Vue {
-  activeTotal = 0;
-  inactiveTotal = 0;
-  combinedTotal = 0;
-
+  totalsBreakdown = { active: 0, inactive: 0, combined: 0 };
+  categoriesBreakdown = new Map();
   unsubscribe: Unsubscribe | null = null;
 
   mounted(): void {
@@ -51,27 +58,46 @@ export default class SubscriptionBreakdown extends Vue {
   }
 
   resetTotals(): void {
-    this.activeTotal = 0;
-    this.inactiveTotal = 0;
-    this.combinedTotal = 0;
+    this.totalsBreakdown = {
+      active: 0,
+      inactive: 0,
+      combined: 0,
+    };
+  }
+
+  calculateTotals(amount: number, isActive: boolean): void {
+    if (isActive) {
+      this.totalsBreakdown.active += amount;
+    } else {
+      this.totalsBreakdown.inactive += amount;
+    }
+
+    this.totalsBreakdown.combined =
+      this.totalsBreakdown.active + this.totalsBreakdown.inactive;
+  }
+
+  calculateCategories(amount: number, category: string): void {
+    if (this.categoriesBreakdown.has(category)) {
+      const total = this.categoriesBreakdown.get(category);
+      this.categoriesBreakdown.set(category, total + amount);
+    } else {
+      this.categoriesBreakdown.set(category, amount);
+    }
+
+    console.log(this.categoriesBreakdown);
   }
 
   handleSnapshot(): Unsubscribe {
     return onSnapshot(query(Subscription.subCollection), (querySnapshot) => {
       this.resetTotals();
+      this.categoriesBreakdown.clear();
       querySnapshot.forEach((doc) => {
         let subscription = doc.data();
         if (subscription instanceof Subscription && subscription.amount) {
           let amount =
             subscription.amount * (subscription.isWithdrawal ? -1 : 1);
-
-          if (subscription.isActive) {
-            this.activeTotal += amount;
-          } else {
-            this.inactiveTotal += amount;
-          }
-
-          this.combinedTotal = this.activeTotal + this.inactiveTotal;
+          this.calculateTotals(amount, subscription.isActive);
+          this.calculateCategories(amount, subscription.category);
         }
       });
     });
