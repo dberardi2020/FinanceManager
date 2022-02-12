@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FCard>
+    <FCard :key="snapshotUpdates">
       <FCardTitle>Purchases Breakdown</FCardTitle>
       <v-divider></v-divider>
       <v-row v-for="[key, value] in this.categoriesBreakdown" :key="key">
@@ -30,6 +30,7 @@ import Purchase from "@/models/Purchase";
 export default class PurchaseBreakdown extends Vue {
   categoriesBreakdown = new Map();
   unsubscribe: Unsubscribe | null = null;
+  snapshotUpdates = 0;
 
   mounted(): void {
     this.unsubscribe = this.handleSnapshot();
@@ -55,6 +56,7 @@ export default class PurchaseBreakdown extends Vue {
           this.calculateCategories(purchase.amount, purchase.category);
         }
       });
+      this.snapshotUpdates++;
     });
   }
 }
