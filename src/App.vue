@@ -74,8 +74,6 @@ export default class App extends Vue {
         router.push({ name: "LogIn" });
       })
       .catch((error) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
         alert(error.message);
       });
   }
