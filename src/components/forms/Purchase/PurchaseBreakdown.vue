@@ -2,33 +2,47 @@
   <div>
     <FCard :key="snapshotUpdates">
       <FCardTitle>Purchases Breakdown</FCardTitle>
-      <v-divider></v-divider>
+      <v-divider class="mb-2"></v-divider>
       <v-row>
-        <v-card-title>Total Spent</v-card-title>
+        <v-card-title class="remove_padding">Total Active</v-card-title>
         <v-spacer></v-spacer>
-        <v-card-title
+        <v-card-title class="remove_padding"
+          >${{
+            this.totalsBreakdown.has("active")
+              ? this.totalsBreakdown.get("active").toFixed(2)
+              : (0).toFixed(2)
+          }}</v-card-title
+        >
+      </v-row>
+      <v-row>
+        <v-card-title class="remove_padding">Total Spent</v-card-title>
+        <v-spacer></v-spacer>
+        <v-card-title class="remove_padding"
           >${{
             this.totalsBreakdown.has("spent")
               ? this.totalsBreakdown.get("spent").toFixed(2)
-              : 0
+              : (0).toFixed(2)
           }}</v-card-title
         >
       </v-row>
       <v-row>
-        <v-card-title>Total Left</v-card-title>
+        <v-card-title class="remove_padding">Total Left</v-card-title>
         <v-spacer></v-spacer>
-        <v-card-title
+        <v-card-title class="remove_padding"
           >${{
             this.totalsBreakdown.has("left")
               ? this.totalsBreakdown.get("left").toFixed(2)
-              : 0
+              : (0).toFixed(2)
           }}</v-card-title
         >
       </v-row>
+      <div class="py-2"></div>
       <v-row v-for="[key, value] in this.categoriesBreakdown" :key="key">
-        <v-card-title>{{ key }}</v-card-title>
+        <v-card-title class="remove_padding">{{ key }}</v-card-title>
         <v-spacer></v-spacer>
-        <v-card-title>${{ value.toFixed(2) }}</v-card-title>
+        <v-card-title class="remove_padding"
+          >${{ value.toFixed(2) }}</v-card-title
+        >
       </v-row>
     </FCard>
   </div>
@@ -111,4 +125,13 @@ export default class PurchaseBreakdown extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.row {
+  margin: 0;
+  padding: 0 16px;
+}
+
+.remove_padding {
+  padding: 0;
+}
+</style>

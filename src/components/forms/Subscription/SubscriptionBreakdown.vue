@@ -2,44 +2,47 @@
   <div>
     <FCard :key="snapshotUpdates">
       <FCardTitle>Subscriptions Breakdown</FCardTitle>
-      <v-divider></v-divider>
+      <v-divider class="mb-2"></v-divider>
       <v-row>
-        <v-card-title>Active Total</v-card-title>
+        <v-card-title class="remove_padding">Total Active</v-card-title>
         <v-spacer></v-spacer>
-        <v-card-title
+        <v-card-title class="remove_padding"
           >${{
             this.totalsBreakdown.has("active")
               ? this.totalsBreakdown.get("active").toFixed(2)
-              : 0
+              : (0).toFixed(2)
           }}</v-card-title
         >
       </v-row>
       <v-row>
-        <v-card-title>Inactive Total</v-card-title>
+        <v-card-title class="remove_padding">Total Inactive</v-card-title>
         <v-spacer></v-spacer>
-        <v-card-title
+        <v-card-title class="remove_padding"
           >${{
             this.totalsBreakdown.has("inactive")
               ? this.totalsBreakdown.get("inactive").toFixed(2)
-              : 0
+              : (0).toFixed(2)
           }}</v-card-title
         >
       </v-row>
       <v-row>
-        <v-card-title>Combined Total</v-card-title>
+        <v-card-title class="remove_padding">Total Combined</v-card-title>
         <v-spacer></v-spacer>
-        <v-card-title
+        <v-card-title class="remove_padding"
           >${{
             this.totalsBreakdown.has("combined")
               ? this.totalsBreakdown.get("combined").toFixed(2)
-              : 0
+              : (0).toFixed(2)
           }}</v-card-title
         >
       </v-row>
+      <div class="py-2"></div>
       <v-row v-for="[key, value] in this.categoriesBreakdown" :key="key">
-        <v-card-title>{{ key }}</v-card-title>
+        <v-card-title class="remove_padding">{{ key }}</v-card-title>
         <v-spacer></v-spacer>
-        <v-card-title>${{ value.toFixed(2) }}</v-card-title>
+        <v-card-title class="remove_padding"
+          >${{ value.toFixed(2) }}</v-card-title
+        >
       </v-row>
     </FCard>
   </div>
@@ -106,4 +109,13 @@ export default class SubscriptionBreakdown extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.row {
+  margin: 0;
+  padding: 0 16px;
+}
+
+.remove_padding {
+  padding: 0;
+}
+</style>
