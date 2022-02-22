@@ -1,27 +1,39 @@
 <template>
   <div>
-    <FCard>
+    <FCard :key="snapshotUpdates">
       <FCardTitle>Subscriptions Breakdown</FCardTitle>
       <v-divider></v-divider>
       <v-row>
         <v-card-title>Active Total</v-card-title>
         <v-spacer></v-spacer>
         <v-card-title
-          >${{ this.totalsBreakdown.active.toFixed(2) }}</v-card-title
+          >${{
+            this.totalsBreakdown.has("active")
+              ? this.totalsBreakdown.get("active").toFixed(2)
+              : 0
+          }}</v-card-title
         >
       </v-row>
       <v-row>
         <v-card-title>Inactive Total</v-card-title>
         <v-spacer></v-spacer>
         <v-card-title
-          >${{ this.totalsBreakdown.inactive.toFixed(2) }}</v-card-title
+          >${{
+            this.totalsBreakdown.has("inactive")
+              ? this.totalsBreakdown.get("inactive").toFixed(2)
+              : 0
+          }}</v-card-title
         >
       </v-row>
       <v-row>
         <v-card-title>Combined Total</v-card-title>
         <v-spacer></v-spacer>
         <v-card-title
-          >${{ this.totalsBreakdown.combined.toFixed(2) }}</v-card-title
+          >${{
+            this.totalsBreakdown.has("combined")
+              ? this.totalsBreakdown.get("combined").toFixed(2)
+              : 0
+          }}</v-card-title
         >
       </v-row>
       <v-row v-for="[key, value] in this.categoriesBreakdown" :key="key">
@@ -39,8 +51,6 @@ import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import { onSnapshot, query } from "firebase/firestore";
 import Subscription from "@/models/Subscription";
-import firebase from "firebase/compat";
-import Unsubscribe = firebase.Unsubscribe;
 
 @Component({
   components: {
@@ -49,47 +59,37 @@ import Unsubscribe = firebase.Unsubscribe;
   },
 })
 export default class SubscriptionBreakdown extends Vue {
-  totalsBreakdown = { active: 0, inactive: 0, combined: 0 };
+  totalsBreakdown = new Map();
   categoriesBreakdown = new Map();
-  unsubscribe: Unsubscribe | null = null;
+  snapshotUpdates = 0;
 
   mounted(): void {
-    this.unsubscribe = this.handleSnapshot();
-  }
-
-  resetTotals(): void {
-    this.totalsBreakdown = {
-      active: 0,
-      inactive: 0,
-      combined: 0,
-    };
+    this.handleSnapshot();
   }
 
   calculateTotals(amount: number, isActive: boolean): void {
+    let active = this.totalsBreakdown.get("active") ?? 0;
+    let inactive = this.totalsBreakdown.get("inactive") ?? 0;
+
     if (isActive) {
-      this.totalsBreakdown.active += amount;
+      active += amount;
+      this.totalsBreakdown.set("active", active);
     } else {
-      this.totalsBreakdown.inactive += amount;
+      inactive += amount;
+      this.totalsBreakdown.set("inactive", inactive);
     }
 
-    this.totalsBreakdown.combined =
-      this.totalsBreakdown.active + this.totalsBreakdown.inactive;
+    this.totalsBreakdown.set("combined", active + inactive);
   }
 
   calculateCategories(amount: number, category: string): void {
-    if (this.categoriesBreakdown.has(category)) {
-      const total = this.categoriesBreakdown.get(category);
-      this.categoriesBreakdown.set(category, total + amount);
-    } else {
-      this.categoriesBreakdown.set(category, amount);
-    }
-
-    console.log(this.categoriesBreakdown);
+    let total = this.categoriesBreakdown.get(category) ?? 0;
+    this.categoriesBreakdown.set(category, total + amount);
   }
 
-  handleSnapshot(): Unsubscribe {
-    return onSnapshot(query(Subscription.subCollection), (querySnapshot) => {
-      this.resetTotals();
+  handleSnapshot(): void {
+    onSnapshot(query(Subscription.subCollection), (querySnapshot) => {
+      this.totalsBreakdown.clear();
       this.categoriesBreakdown.clear();
       querySnapshot.forEach((doc) => {
         let subscription = doc.data();
@@ -100,6 +100,7 @@ export default class SubscriptionBreakdown extends Vue {
           this.calculateCategories(amount, subscription.category);
         }
       });
+      this.snapshotUpdates++;
     });
   }
 }
