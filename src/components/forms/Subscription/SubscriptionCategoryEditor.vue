@@ -100,10 +100,24 @@ export default class SubscriptionCategoryEditor extends Vue {
     }
   }
 
-  deleteCategory(item: Category): void {
+  async deleteCategory(item: Category): Promise<void> {
     if (item) {
-      updateDoc(UserData.userDataDoc, {
+      await updateDoc(UserData.userDataDoc, {
         [subscriptionCategories]: arrayRemove(item),
+      });
+
+      const q = query(
+        Subscription.subCollection,
+        where("category", "==", item.name)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        let sub: Subscription | unknown = doc.data();
+        if (sub instanceof Subscription) {
+          sub.id = doc.id;
+          sub.category = "";
+          sub.updateInDB();
+        }
       });
     }
   }
