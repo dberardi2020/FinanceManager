@@ -24,14 +24,14 @@
       <v-card-text>
         <FTextField
           class="py-2"
-          v-model="subscription.source"
-          label="Source"
+          v-model="subscription.destination"
+          label="Destination"
           :rules="fieldRequired"
         ></FTextField>
         <FTextField
           class="py-2"
-          v-model="subscription.destination"
-          label="Destination"
+          v-model="subscription.source"
+          label="Source"
           :rules="fieldRequired"
         ></FTextField>
         <FCurrencyField
