@@ -2,12 +2,12 @@
   <div>
     <FDataTable :headers="headers" :items="subs">
       <template v-slot:item.amount="{ item }">
-        <v-chip :color="item.isWithdrawal ? 'error' : 'success'">
+        <v-chip :color="fillColor(item)">
           {{ "$" + item.amount }}
         </v-chip>
       </template>
       <template v-slot:item.category="{ item }">
-        <v-chip :color="item.isWithdrawal ? 'error' : 'success'">
+        <v-chip :color="fillColor(item)">
           {{ item.category }}
         </v-chip>
       </template>
@@ -96,6 +96,14 @@ export default class SubscriptionTable extends Vue {
   ];
 
   unsubscribe: Unsubscribe | null = null;
+
+  fillColor(subscription: Subscription): string {
+    if (subscription.category == "") {
+      return "white";
+    }
+
+    return subscription.isWithdrawal ? "error" : "success";
+  }
 
   editSub(subscription: Subscription): void {
     this.$root.$emit("editSubscription", subscription);
