@@ -33,6 +33,9 @@ import {
   onSnapshot,
   updateDoc,
   arrayRemove,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import Vue from "vue";
 import Component from "vue-class-component";
@@ -43,6 +46,7 @@ import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import Category, { purchaseCategories } from "@/models/Category";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;
+import Purchase from "@/models/Purchase";
 
 @Component({
   components: { FBtn, FTextField, FCardTitle, FCard },
@@ -72,10 +76,24 @@ export default class PurchaseCategoryEditor extends Vue {
     }
   }
 
-  deleteCategory(item: Category): void {
+  async deleteCategory(item: Category): Promise<void> {
     if (item) {
-      updateDoc(UserData.userDataDoc, {
+      await updateDoc(UserData.userDataDoc, {
         [purchaseCategories]: arrayRemove(item),
+      });
+
+      const q = query(
+        Purchase.purchaseCollection,
+        where("category", "==", item.name)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        let purchase: Purchase | unknown = doc.data();
+        if (purchase instanceof Purchase) {
+          purchase.id = doc.id;
+          purchase.category = "";
+          purchase.updateInDB();
+        }
       });
     }
   }
