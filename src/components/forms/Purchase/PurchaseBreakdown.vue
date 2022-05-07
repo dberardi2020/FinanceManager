@@ -96,7 +96,11 @@ export default class PurchaseBreakdown extends Vue {
       this.totalsBreakdown.delete("spent");
       querySnapshot.forEach((doc) => {
         let purchase = doc.data();
-        if (purchase instanceof Purchase && purchase.amount) {
+        if (
+          purchase instanceof Purchase &&
+          purchase.amount &&
+          purchase.category
+        ) {
           this.calculateCategories(purchase.amount, purchase.category);
         }
       });
@@ -111,7 +115,8 @@ export default class PurchaseBreakdown extends Vue {
         if (
           subscription instanceof Subscription &&
           subscription.amount &&
-          subscription.isActive
+          subscription.isActive &&
+          subscription.category
         ) {
           let amount =
             subscription.amount * (subscription.isWithdrawal ? -1 : 1);

@@ -96,7 +96,11 @@ export default class SubscriptionBreakdown extends Vue {
       this.categoriesBreakdown.clear();
       querySnapshot.forEach((doc) => {
         let subscription = doc.data();
-        if (subscription instanceof Subscription && subscription.amount) {
+        if (
+          subscription instanceof Subscription &&
+          subscription.amount &&
+          subscription.category
+        ) {
           let amount =
             subscription.amount * (subscription.isWithdrawal ? -1 : 1);
           this.calculateTotals(amount, subscription.isActive);
