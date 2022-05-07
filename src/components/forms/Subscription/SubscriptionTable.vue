@@ -3,7 +3,7 @@
     <FDataTable :headers="headers" :items="subs">
       <template v-slot:item.amount="{ item }">
         <v-chip :color="fillColor(item)">
-          {{ "$" + item.amount }}
+          {{ "$" + item.amount.toFixed(2) }}
         </v-chip>
       </template>
       <template v-slot:item.category="{ item }">

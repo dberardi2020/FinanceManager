@@ -5,7 +5,7 @@
         {{ formatDate(item.date) }}
       </template>
       <template v-slot:item.amount="{ item }">
-        {{ "$" + item.amount }}
+        {{ "$" + item.amount.toFixed(2) }}
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon small class="mr-2" @click="editPurchase(item)">
