@@ -64,8 +64,7 @@ export default class LogIn extends LogInSignUp {
   logIn(): void {
     if (this.form.validate()) {
       signInWithEmailAndPassword(auth, this.email, this.password)
-        .then((userCredential) => {
-          alert("User logged in: " + userCredential.user.email);
+        .then(() => {
           router.push({ name: "Home" });
         })
         .catch((error) => {

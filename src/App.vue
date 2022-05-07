@@ -70,7 +70,6 @@ export default class App extends Vue {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        alert("Log out successful");
         router.push({ name: "LogIn" });
       })
       .catch((error) => {
