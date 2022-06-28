@@ -2,13 +2,13 @@
   <div>
     <v-row>
       <v-col cols="3">
-        <PurchaseForm ref="purchaseForm"></PurchaseForm>
+        <SubscriptionForm ref="subForm"></SubscriptionForm>
       </v-col>
       <v-col cols="6">
-        <PurchaseTable></PurchaseTable>
+        <SubscriptionTable></SubscriptionTable>
       </v-col>
       <v-col cols="3">
-        <PurchaseBreakdown></PurchaseBreakdown>
+        <SubscriptionBreakdown></SubscriptionBreakdown>
       </v-col>
     </v-row>
   </div>
@@ -18,17 +18,17 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
-import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
-import PurchaseTable from "@/components/forms/Purchase/PurchaseTable.vue";
-import PurchaseBreakdown from "@/components/forms/Purchase/PurchaseBreakdown.vue";
+import SubscriptionForm from "@/components/SubscriptionForm.vue";
+import SubscriptionTable from "@/components/SubscriptionTable.vue";
+import SubscriptionBreakdown from "@/components/SubscriptionBreakdown.vue";
 
 @Component({
   components: {
-    PurchaseBreakdown,
-    PurchaseTable,
+    SubscriptionBreakdown,
+    SubscriptionTable,
+    SubscriptionForm,
     FCardTitle,
-    PurchaseForm,
     FCard,
   },
 })

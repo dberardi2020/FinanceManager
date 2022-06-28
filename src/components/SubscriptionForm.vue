@@ -80,9 +80,9 @@ import FTextField from "@/components/vuetify-component-wrappers/FTextField/FText
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import { onSnapshot } from "firebase/firestore";
 import UserData from "@/models/UserData";
-import CategoryEditor from "@/components/forms/Purchase/PurchaseCategoryEditor.vue";
+import CategoryEditor from "@/components/PurchaseCategoryEditor.vue";
 import Subscription from "@/models/Subscription";
-import SubscriptionCategoryEditor from "@/components/forms/Subscription/SubscriptionCategoryEditor.vue";
+import SubscriptionCategoryEditor from "@/components/SubscriptionCategoryEditor.vue";
 import Category, { subscriptionCategories } from "@/models/Category";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;
