@@ -40,9 +40,10 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   const currentUser = userStore.user;
-  if (to.name !== "LogInView.vue" && !currentUser) {
+
+  if (to.name !== "LogIn" && !currentUser) {
     next({ name: "LogIn" });
-  } else if (to.name === "LogInView.vue" && currentUser) {
+  } else if (to.name === "LogIn" && currentUser) {
     next({ name: "Home" });
   } else {
     next();

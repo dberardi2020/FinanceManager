@@ -80,8 +80,8 @@ import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCard
 import moment from "moment";
 import { onSnapshot } from "firebase/firestore";
 import UserData from "@/models/UserData";
-import CategoryEditor from "@/components/forms/Purchase/PurchaseCategoryEditor.vue";
-import PurchaseCategoryEditor from "@/components/forms/Purchase/PurchaseCategoryEditor.vue";
+import CategoryEditor from "@/components/PurchaseCategoryEditor.vue";
+import PurchaseCategoryEditor from "@/components/PurchaseCategoryEditor.vue";
 import Category, { purchaseCategories } from "@/models/Category";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;

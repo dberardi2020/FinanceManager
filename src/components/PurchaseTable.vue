@@ -24,7 +24,7 @@ import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { query, onSnapshot } from "firebase/firestore";
 import Purchase from "@/models/Purchase.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
-import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
+import PurchaseForm from "@/components/PurchaseForm.vue";
 import moment from "moment";
 import { Ref } from "vue-property-decorator";
 import firebase from "firebase/compat";

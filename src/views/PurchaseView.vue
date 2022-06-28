@@ -18,10 +18,10 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
-import PurchaseForm from "@/components/forms/Purchase/PurchaseForm.vue";
+import PurchaseForm from "@/components/PurchaseForm.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
-import PurchaseTable from "@/components/forms/Purchase/PurchaseTable.vue";
-import PurchaseBreakdown from "@/components/forms/Purchase/PurchaseBreakdown.vue";
+import PurchaseTable from "@/components/PurchaseTable.vue";
+import PurchaseBreakdown from "@/components/PurchaseBreakdown.vue";
 
 @Component({
   components: {

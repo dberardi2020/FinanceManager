@@ -19,9 +19,9 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
-import SubscriptionForm from "@/components/forms/Subscription/SubscriptionForm.vue";
-import SubscriptionTable from "@/components/forms/Subscription/SubscriptionTable.vue";
-import SubscriptionBreakdown from "@/components/forms/Subscription/SubscriptionBreakdown.vue";
+import SubscriptionForm from "@/components/SubscriptionForm.vue";
+import SubscriptionTable from "@/components/SubscriptionTable.vue";
+import SubscriptionBreakdown from "@/components/SubscriptionBreakdown.vue";
 
 @Component({
   components: {

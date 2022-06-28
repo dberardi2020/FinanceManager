@@ -34,7 +34,7 @@ import Subscription from "@/models/Subscription.ts";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
-import SubscriptionForm from "@/components/forms/Subscription/SubscriptionForm.vue";
+import SubscriptionForm from "@/components/SubscriptionForm.vue";
 import { Ref } from "vue-property-decorator";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;

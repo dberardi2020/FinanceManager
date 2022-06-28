@@ -54,7 +54,7 @@ export default class App extends Vue {
   sidebar = false;
   menuItems = [
     // { title: "Home", path: "/" },
-    { title: "SubscriptionView.vue", path: "/subscriptions" },
+    { title: "Subscriptions", path: "/subscriptions" },
     { title: "Purchases", path: "/purchases" },
   ];
 
@@ -70,7 +70,7 @@ export default class App extends Vue {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        router.push({ name: "LogInView.vue" });
+        router.push({ name: "LogIn" });
       })
       .catch((error) => {
         alert(error.message);
