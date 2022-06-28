@@ -65,7 +65,7 @@ export default class LogIn extends LogInSignUp {
     if (this.form.validate()) {
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then(() => {
-          router.push({ name: "Home" });
+          router.push({ name: "HomeView.vue" });
         })
         .catch((error) => {
           // const errorCode = error.code;
@@ -80,7 +80,7 @@ export default class LogIn extends LogInSignUp {
         .then((userCredential) => {
           setDoc(doc(db, "users", userCredential.user.uid), {});
           alert("Created account: " + userCredential.user.email);
-          router.push({ name: "Home" });
+          router.push({ name: "HomeView.vue" });
         })
         .catch((error) => {
           // const errorCode = error.code;

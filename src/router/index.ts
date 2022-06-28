@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import Home from "../views/Home.vue";
+import Home from "../views/HomeView.vue";
 import { getModule } from "vuex-module-decorators";
 import { UserStore } from "@/store/UserStore";
 import store from "@/store";
@@ -18,17 +18,17 @@ const routes: Array<RouteConfig> = [
   {
     path: "/login",
     name: "LogIn",
-    component: () => import("../components/new-user/LogIn.vue"),
+    component: () => import("../views/LogInView.vue"),
   },
   {
     path: "/purchases",
     name: "Purchases",
-    component: () => import("../views/Purchases.vue"),
+    component: () => import("../views/PurchaseView.vue"),
   },
   {
     path: "/subscriptions",
     name: "Subscriptions",
-    component: () => import("../views/Subscriptions.vue"),
+    component: () => import("../views/SubscriptionView.vue"),
   },
 ];
 
@@ -37,11 +37,12 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
+
 router.beforeEach(async (to, from, next) => {
   const currentUser = userStore.user;
-  if (to.name !== "LogIn" && !currentUser) {
+  if (to.name !== "LogInView.vue" && !currentUser) {
     next({ name: "LogIn" });
-  } else if (to.name === "LogIn" && currentUser) {
+  } else if (to.name === "LogInView.vue" && currentUser) {
     next({ name: "Home" });
   } else {
     next();

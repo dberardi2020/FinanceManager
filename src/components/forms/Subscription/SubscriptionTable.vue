@@ -27,7 +27,6 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { query, onSnapshot } from "firebase/firestore";
