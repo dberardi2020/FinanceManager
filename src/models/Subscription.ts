@@ -6,6 +6,7 @@ import UserData from "@/models/UserData";
 
 export default class Subscription {
   id?: string;
+  sortId?: number;
   isActive: boolean;
   isWithdrawal: boolean;
   category: string;

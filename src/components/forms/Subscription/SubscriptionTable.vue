@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FDataTable :headers="headers" :items="subs">
+    <FDataTable :headers="headers" :items="subs" :sort-by="sortField">
       <template v-slot:item.amount="{ item }">
         <v-chip :color="fillColor(item)">
           {{ "$" + item.amount.toFixed(2) }}
@@ -39,6 +39,7 @@ import SubscriptionForm from "@/components/forms/Subscription/SubscriptionForm.v
 import { Ref } from "vue-property-decorator";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;
+import { SubscriptionTableSorter } from "@/mixins/SubscriptionTableSorter";
 
 @Component({
   components: {
@@ -50,12 +51,14 @@ import Unsubscribe = firebase.Unsubscribe;
     FBtn,
   },
 })
-export default class SubscriptionTable extends Vue {
+export default class SubscriptionTable extends SubscriptionTableSorter {
   /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
 
   @Ref("subForm") readonly subForm!: SubscriptionForm;
   subs: Subscription[] = [];
   tempSub: Subscription | undefined | unknown = undefined;
+  sortField = "sortId";
+
   headers = [
     {
       text: "Active",
@@ -136,6 +139,8 @@ export default class SubscriptionTable extends Vue {
           this.subs.push(this.tempSub);
         }
       });
+      this.sort(this.subs);
+      this.sortField = "sortId";
     });
   }
 }

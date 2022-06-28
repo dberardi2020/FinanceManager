@@ -44,7 +44,7 @@ import {
 } from "firebase/auth";
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
-import { LogInSignUp } from "@/mixins/users/LogInSignUp";
+import { LogInSignUp } from "@/mixins/LogInSignUp";
 import { auth, db } from "@/main";
 import router from "@/router";
 import { doc, setDoc } from "firebase/firestore";
