@@ -37,7 +37,15 @@
         >
       </v-row>
       <div class="py-2"></div>
-      <v-row v-for="[key, value] in this.categoriesBreakdown" :key="key">
+      <v-row v-for="[key, value] in this.depositsBreakdown" :key="key">
+        <v-card-title class="remove_padding">{{ key }}</v-card-title>
+        <v-spacer></v-spacer>
+        <v-card-title class="remove_padding"
+          >${{ value.toFixed(2) }}</v-card-title
+        >
+      </v-row>
+      <div class="py-2"></div>
+      <v-row v-for="[key, value] in this.withdrawalsBreakdown" :key="key">
         <v-card-title class="remove_padding">{{ key }}</v-card-title>
         <v-spacer></v-spacer>
         <v-card-title class="remove_padding"
@@ -64,6 +72,8 @@ import Subscription from "@/models/Subscription";
 export default class SubscriptionBreakdown extends Vue {
   totalsBreakdown = new Map();
   categoriesBreakdown = new Map();
+  depositsBreakdown = new Map();
+  withdrawalsBreakdown = new Map();
   snapshotUpdates = 0;
 
   mounted(): void {
@@ -104,11 +114,30 @@ export default class SubscriptionBreakdown extends Vue {
           let amount =
             subscription.amount * (subscription.isWithdrawal ? -1 : 1);
           this.calculateTotals(amount, subscription.isActive);
-          this.calculateCategories(amount, subscription.category);
+          if (subscription.isActive)
+            this.calculateCategories(amount, subscription.category);
         }
       });
+      this.sortCategories();
       this.snapshotUpdates++;
     });
+  }
+
+  sortCategories(): void {
+    const categoriesArray = [...this.categoriesBreakdown];
+    console.log(categoriesArray);
+    const depositsArray = categoriesArray.filter(([, value]) => value >= 0);
+    const withdrawalArray = categoriesArray.filter(([, value]) => value < 0);
+
+    this.depositsBreakdown = new Map(
+      depositsArray.sort(([, value1], [, value2]) => (value1 > value2 ? -1 : 1))
+    );
+
+    this.withdrawalsBreakdown = new Map(
+      withdrawalArray.sort(([, value1], [, value2]) =>
+        value1 < value2 ? -1 : 1
+      )
+    );
   }
 }
 </script>

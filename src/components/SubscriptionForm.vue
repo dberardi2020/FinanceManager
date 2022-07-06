@@ -37,7 +37,7 @@
         <FCurrencyField
           class="pt-2"
           v-model="subscription.amount"
-          label="Amount"
+          label="Monthly Amount"
           :rules="fieldRequired"
           @focusout="amountZeroCheck"
           required
