@@ -126,6 +126,10 @@ export default class SubscriptionTable extends SubscriptionTableSorter {
 
   mounted(): void {
     this.unsubscribe = this.handleSnapshot();
+
+    this.$root.$on("triggerSubSort", () => {
+      this.sort(this.subs);
+    });
   }
 
   handleSnapshot(): Unsubscribe {
@@ -139,7 +143,6 @@ export default class SubscriptionTable extends SubscriptionTableSorter {
         }
       });
       this.sort(this.subs);
-      this.sortField = "sortId";
     });
   }
 }
