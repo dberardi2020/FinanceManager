@@ -27,12 +27,14 @@
           v-model="subscription.destination"
           label="Destination"
           :rules="fieldRequired"
+          v-on:keyup.enter="submit"
         ></FTextField>
         <FTextField
           class="py-2"
           v-model="subscription.source"
           label="Source"
           :rules="fieldRequired"
+          v-on:keyup.enter="submit"
         ></FTextField>
         <FCurrencyField
           class="pt-2"
@@ -41,6 +43,7 @@
           :rules="fieldRequired"
           @focusout="amountZeroCheck"
           required
+          v-on:keypress.enter="submit"
         ></FCurrencyField>
       </v-card-text>
     </v-form>
@@ -49,20 +52,9 @@
       <v-spacer></v-spacer>
       <FBtn v-if="updateMode" color="error" @click="clear">Cancel</FBtn>
       <FBtn v-if="!updateMode" color="error" @click="clear">Clear</FBtn>
-      <FBtn
-        v-if="!updateMode"
-        color="success"
-        @click="submit"
-        :disabled="isDisabled()"
-        >Submit</FBtn
-      >
-      <FBtn
-        v-if="updateMode"
-        color="success"
-        @click="update"
-        :disabled="isDisabled()"
-        >Update</FBtn
-      >
+      <FBtn color="success" @click="submit" :disabled="isDisabled()">{{
+        updateMode ? "Update" : "Submit"
+      }}</FBtn>
     </v-card-actions>
     <v-dialog v-model="showDialogue" width="25%">
       <SubscriptionCategoryEditor> </SubscriptionCategoryEditor>
@@ -128,13 +120,13 @@ export default class SubscriptionForm extends Vue {
   }
 
   submit(): void {
-    this.subscription.addToDB();
-    this.clear();
-  }
+    if (!this.isDisabled()) {
+      this.updateMode && !this.isDisabled()
+        ? this.subscription.updateInDB()
+        : this.subscription.addToDB();
 
-  update(): void {
-    this.subscription.updateInDB();
-    this.clear();
+      this.clear();
+    }
   }
 
   clear(): void {
