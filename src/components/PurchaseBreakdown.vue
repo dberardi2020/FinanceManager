@@ -18,7 +18,7 @@
         <v-card-title class="remove_padding">Total Spent</v-card-title>
         <v-spacer></v-spacer>
         <v-card-title class="remove_padding"
-          >${{
+          >$-{{
             this.totalsBreakdown.has("spent")
               ? this.totalsBreakdown.get("spent").toFixed(2)
               : (0).toFixed(2)
@@ -41,7 +41,7 @@
         <v-card-title class="remove_padding">{{ key }}</v-card-title>
         <v-spacer></v-spacer>
         <v-card-title class="remove_padding"
-          >${{ value.toFixed(2) }}</v-card-title
+          >$-{{ value.toFixed(2) }}</v-card-title
         >
       </v-row>
     </FCard>
@@ -76,6 +76,8 @@ export default class PurchaseBreakdown extends Vue {
     let spent = this.totalsBreakdown.get("spent") ?? 0;
 
     this.totalsBreakdown.set("left", active - spent);
+
+    this.sortCategories();
   }
 
   calculateActive(amount: number): void {
@@ -88,6 +90,15 @@ export default class PurchaseBreakdown extends Vue {
     let spent = this.totalsBreakdown.get("spent") ?? 0;
     this.categoriesBreakdown.set(category, total + amount);
     this.totalsBreakdown.set("spent", spent + amount);
+  }
+
+  sortCategories(): void {
+    const categoriesArray = [...this.categoriesBreakdown];
+    this.categoriesBreakdown = new Map(
+      categoriesArray.sort(([, value1], [, value2]) =>
+        value1 > value2 ? -1 : 1
+      )
+    );
   }
 
   handleSnapshots(): void {
