@@ -125,7 +125,6 @@ export default class SubscriptionBreakdown extends Vue {
 
   sortCategories(): void {
     const categoriesArray = [...this.categoriesBreakdown];
-    console.log(categoriesArray);
     const depositsArray = categoriesArray.filter(([, value]) => value >= 0);
     const withdrawalArray = categoriesArray.filter(([, value]) => value < 0);
 
