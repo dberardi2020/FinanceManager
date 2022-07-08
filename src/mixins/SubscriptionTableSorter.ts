@@ -20,6 +20,9 @@ export class SubscriptionTableSorter extends Vue {
       case SubscriptionSortEnum.isActive:
         sortFunction = SubscriptionTableSorter.sortByActive;
         break;
+      case SubscriptionSortEnum.source:
+        sortFunction = SubscriptionTableSorter.sortBySource;
+        break;
       case SubscriptionSortEnum.amount:
         sortFunction = SubscriptionTableSorter.sortByAmount;
         break;
@@ -46,7 +49,7 @@ export class SubscriptionTableSorter extends Vue {
         ? a.isActive < b.isActive
           ? 1
           : a.isActive === b.isActive
-          ? a.amount > b.amount
+          ? a.amount < b.amount
             ? 1
             : -1
           : -1
@@ -62,7 +65,7 @@ export class SubscriptionTableSorter extends Vue {
         ? a.category > b.category
           ? 1
           : a.category === b.category
-          ? a.amount > b.amount
+          ? a.amount < b.amount
             ? 1
             : -1
           : -1
@@ -70,9 +73,21 @@ export class SubscriptionTableSorter extends Vue {
       : this.defaultSort(a, b);
   }
 
+  private static sortBySource(a: Subscription, b: Subscription): number {
+    return a.amount && b.amount
+      ? a.source > b.source
+        ? 1
+        : a.source === b.source
+        ? a.amount < b.amount
+          ? 1
+          : -1
+        : -1
+      : this.defaultSort(a, b);
+  }
+
   private static sortByAmount(a: Subscription, b: Subscription): number {
     return a.amount && b.amount
-      ? a.amount > b.amount
+      ? a.amount < b.amount
         ? 1
         : -1
       : this.defaultSort(a, b);
