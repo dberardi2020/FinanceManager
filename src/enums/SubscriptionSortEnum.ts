@@ -1,6 +1,7 @@
 enum SubscriptionSortEnum {
   category,
   isActive,
+  source,
   amount,
 }
 

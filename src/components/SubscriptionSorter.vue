@@ -9,6 +9,7 @@
         >
           <v-btn>Category</v-btn>
           <v-btn>Active</v-btn>
+          <v-btn>Source</v-btn>
           <v-btn>Amount</v-btn>
         </v-btn-toggle>
       </v-col>
