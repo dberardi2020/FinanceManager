@@ -59,6 +59,10 @@ export default class PurchaseCategoryEditor extends Vue {
 
   mounted(): void {
     this.unsubscribe = this.handleSnapshot();
+
+    this.$root.$on("purchaseCategoryEditorClosed", () => {
+      this.categoryField = "";
+    });
   }
 
   addCategory(): void {

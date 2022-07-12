@@ -124,6 +124,10 @@ export default class SubscriptionCategoryEditor extends Vue {
 
   mounted(): void {
     this.unsubscribe = this.handleSnapshot();
+
+    this.$root.$on("subCategoryEditorClosed", () => {
+      this.categoryField = "";
+    });
   }
 
   handleSnapshot(): Unsubscribe {

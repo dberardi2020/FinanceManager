@@ -52,7 +52,8 @@
       }}</FBtn>
     </v-card-actions>
     <v-dialog v-model="showDialogue" width="25%">
-      <PurchaseCategoryEditor> </PurchaseCategoryEditor>
+      <PurchaseCategoryEditor v-click-outside="handleCloseCategoryEditor">
+      </PurchaseCategoryEditor>
     </v-dialog>
   </FCard>
 </template>
@@ -109,6 +110,12 @@ export default class PurchaseForm extends Vue {
   amountZeroCheck(): void {
     if (this.purchase.amount == 0) {
       this.purchase.amount = null;
+    }
+  }
+
+  handleCloseCategoryEditor(): void {
+    if (this.showDialogue) {
+      this.$root.$emit("purchaseCategoryEditorClosed");
     }
   }
 
