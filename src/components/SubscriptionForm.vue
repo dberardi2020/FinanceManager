@@ -57,7 +57,8 @@
       }}</FBtn>
     </v-card-actions>
     <v-dialog v-model="showDialogue" width="25%">
-      <SubscriptionCategoryEditor> </SubscriptionCategoryEditor>
+      <SubscriptionCategoryEditor v-click-outside="handleCloseCategoryEditor">
+      </SubscriptionCategoryEditor>
     </v-dialog>
   </FCard>
 </template>
@@ -107,6 +108,12 @@ export default class SubscriptionForm extends Vue {
   amountZeroCheck(): void {
     if (this.subscription.amount == 0) {
       this.subscription.amount = null;
+    }
+  }
+
+  handleCloseCategoryEditor(): void {
+    if (this.showDialogue) {
+      this.$root.$emit("subCategoryEditorClosed");
     }
   }
 
