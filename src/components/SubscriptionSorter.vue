@@ -27,11 +27,11 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import SubscriptionSortSettings from "@/models/SubscriptionSortSettings";
+import SubscriptionSorterSettings from "@/models/SubscriptionSorterSettings";
 
 @Component({})
 export default class SubscriptionSorter extends Vue {
-  settings = SubscriptionSortSettings.getInstance();
+  settings = SubscriptionSorterSettings.getInstance();
 
   triggerSubSort(): void {
     this.$root.$emit("triggerSubSort");
