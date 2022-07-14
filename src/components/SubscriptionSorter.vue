@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row align="center">
+    <v-row class="fix_margin" align="center">
       <v-col cols="6">
         <v-btn-toggle
           mandatory
@@ -39,4 +39,4 @@ export default class SubscriptionSorter extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

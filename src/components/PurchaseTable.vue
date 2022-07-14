@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FDataTable :headers="headers" :items="purchases">
+    <FDataTable :headers="headers" :items="purchases" :sort-by="sortField">
       <template v-slot:item.date="{ item }">
         {{ formatDate(item.date) }}
       </template>
@@ -29,14 +29,17 @@ import moment from "moment";
 import { Ref } from "vue-property-decorator";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;
+import { PurchaseTableSorter } from "@/mixins/PurchaseTableSorter";
 
 @Component({
   components: { PurchaseForm, FDataTable, FBtn },
 })
-export default class PurchaseTable extends Vue {
+export default class PurchaseTable extends PurchaseTableSorter {
   @Ref("purchaseForm") readonly purchaseForm!: PurchaseForm;
   purchases: Purchase[] = [];
   tempPurchase: Purchase | undefined | unknown = undefined;
+  sortField = "sortId";
+
   headers = [
     {
       text: "Date",
@@ -95,6 +98,10 @@ export default class PurchaseTable extends Vue {
 
   mounted(): void {
     this.unsubscribe = this.handleSnapshot();
+
+    this.$root.$on("triggerPurchaseSort", () => {
+      this.sort(this.purchases);
+    });
   }
 
   handleSnapshot(): Unsubscribe {
@@ -107,6 +114,8 @@ export default class PurchaseTable extends Vue {
           this.purchases.push(this.tempPurchase);
         }
       });
+      this.sort(this.purchases);
+      this.sortField = "sortId";
     });
   }
 }

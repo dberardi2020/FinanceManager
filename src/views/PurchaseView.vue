@@ -5,6 +5,7 @@
         <PurchaseForm ref="purchaseForm"></PurchaseForm>
       </v-col>
       <v-col cols="6">
+        <PurchaseSorter></PurchaseSorter>
         <PurchaseTable></PurchaseTable>
       </v-col>
       <v-col cols="3">
@@ -22,9 +23,11 @@ import PurchaseForm from "@/components/PurchaseForm.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import PurchaseTable from "@/components/PurchaseTable.vue";
 import PurchaseBreakdown from "@/components/PurchaseBreakdown.vue";
+import PurchaseSorter from "@/components/PurchaseSorter.vue";
 
 @Component({
   components: {
+    PurchaseSorter,
     PurchaseBreakdown,
     PurchaseTable,
     FCardTitle,
