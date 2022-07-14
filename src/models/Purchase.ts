@@ -6,6 +6,7 @@ import UserData from "@/models/UserData";
 
 export default class Purchase {
   id?: string;
+  sortId?: number;
   date: string;
   description: string;
   category: string;
