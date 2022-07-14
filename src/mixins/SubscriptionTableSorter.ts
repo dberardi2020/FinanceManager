@@ -1,29 +1,29 @@
 import Component from "vue-class-component";
 import Vue from "vue";
 import Subscription from "@/models/Subscription";
-import SubscriptionSortSettings from "@/models/SubscriptionSortSettings";
-import SubscriptionSortEnum from "@/enums/SubscriptionSortEnum";
+import SubscriptionSorterEnum from "@/enums/SubscriptionSorterEnum";
+import SubscriptionSorterSettings from "@/models/SubscriptionSorterSettings";
 
 @Component
 export class SubscriptionTableSorter extends Vue {
   private subscriptionList: Subscription[] = [];
-  private settings = SubscriptionSortSettings.getInstance();
+  private settings = SubscriptionSorterSettings.getInstance();
 
   sort(subs: Subscription[]): void {
     this.subscriptionList = subs;
     let sortFunction;
 
     switch (this.settings.category) {
-      case SubscriptionSortEnum.category:
+      case SubscriptionSorterEnum.category:
         sortFunction = SubscriptionTableSorter.sortByCategory;
         break;
-      case SubscriptionSortEnum.isActive:
+      case SubscriptionSorterEnum.isActive:
         sortFunction = SubscriptionTableSorter.sortByActive;
         break;
-      case SubscriptionSortEnum.source:
+      case SubscriptionSorterEnum.source:
         sortFunction = SubscriptionTableSorter.sortBySource;
         break;
-      case SubscriptionSortEnum.amount:
+      case SubscriptionSorterEnum.amount:
         sortFunction = SubscriptionTableSorter.sortByAmount;
         break;
     }
