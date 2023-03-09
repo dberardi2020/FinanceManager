@@ -21,7 +21,6 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import moment from "moment";
 
 @Component({})
 export default class FDataTable extends Vue {}

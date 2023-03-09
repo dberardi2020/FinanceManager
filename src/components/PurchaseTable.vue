@@ -18,11 +18,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { query, onSnapshot } from "firebase/firestore";
-import Purchase from "@/models/Purchase.ts";
+import Purchase from "@/models/Purchase";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import PurchaseForm from "@/components/PurchaseForm.vue";
 import moment from "moment";
@@ -104,6 +103,14 @@ export default class PurchaseTable extends PurchaseTableSorter {
     });
   }
 
+  // filter(): void {
+  //   let filterMonth = new Date(this.$props.filterMonth);
+
+  //   this.purchases.forEach((purchase) => {
+  //     // console.log(filterMonth);
+  //   });
+  // }
+
   handleSnapshot(): Unsubscribe {
     return onSnapshot(query(Purchase.purchaseCollection), (querySnapshot) => {
       this.purchases.splice(0);
@@ -116,6 +123,7 @@ export default class PurchaseTable extends PurchaseTableSorter {
       });
       this.sort(this.purchases);
       this.sortField = "sortId";
+      // this.filter();
     });
   }
 }

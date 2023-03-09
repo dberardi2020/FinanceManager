@@ -30,7 +30,7 @@
 import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import { query, onSnapshot } from "firebase/firestore";
-import Subscription from "@/models/Subscription.ts";
+import Subscription from "@/models/Subscription";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
@@ -51,8 +51,6 @@ import { SubscriptionTableSorter } from "@/mixins/SubscriptionTableSorter";
   },
 })
 export default class SubscriptionTable extends SubscriptionTableSorter {
-  /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
-
   @Ref("subForm") readonly subForm!: SubscriptionForm;
   subs: Subscription[] = [];
   tempSub: Subscription | undefined | unknown = undefined;

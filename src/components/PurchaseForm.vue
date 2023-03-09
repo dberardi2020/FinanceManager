@@ -1,10 +1,11 @@
 <template>
   <FCard :elevation="updateMode ? 10 : 2">
     <FCardTitle> Purchase Details </FCardTitle>
+    <div>{{ purchaseDate.value }}</div>
     <v-row class="my-2 d-flex justify-center">
       <FDatePicker
         class="elevation-1"
-        v-model="purchase.date"
+        :datePickerModel="purchaseDate"
         show-adjacent-months
         color="#1976d3"
       ></FDatePicker>
@@ -77,6 +78,8 @@ import PurchaseCategoryEditor from "@/components/PurchaseCategoryEditor.vue";
 import Category, { purchaseCategories } from "@/models/Category";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;
+import { FDatePickerModel } from "./vuetify-component-wrappers/FDatePicker/FDatePickerModel";
+import { FDatePickerModelType } from "./vuetify-component-wrappers/FDatePicker/FDatePickerModelType";
 
 @Component({
   components: {
@@ -98,11 +101,9 @@ export default class PurchaseForm extends Vue {
   showDialogue = false;
   updateMode = false;
 
-  currentDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-    .toISOString()
-    .substr(0, 10);
+  purchaseDate: FDatePickerModel = new FDatePickerModel();
 
-  purchase = new Purchase(this.currentDate, "", "", null);
+  purchase = new Purchase(this.purchaseDate.value, "", "", null);
 
   categories: Category[] = [];
   unsubscribe: Unsubscribe | null = null;
@@ -139,7 +140,7 @@ export default class PurchaseForm extends Vue {
   }
 
   clear(): void {
-    this.purchase = new Purchase(this.currentDate, "", "", null);
+    this.purchase = new Purchase(this.purchaseDate.value, "", "", null);
     this.inputs.resetValidation();
     this.updateMode = false;
   }
