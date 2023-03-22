@@ -1,6 +1,10 @@
 <template>
   <div>
-    <FDataTable :headers="headers" :items="purchases" :sort-by="sortField">
+    <FDataTable
+      :headers="headers"
+      :items="displayPurchases"
+      :sort-by="sortField"
+    >
       <template v-slot:item.date="{ item }">
         {{ formatDate(item.date) }}
       </template>
@@ -25,17 +29,20 @@ import Purchase from "@/models/Purchase";
 import FDataTable from "@/components/vuetify-component-wrappers/FDataTable/FDataTable.vue";
 import PurchaseForm from "@/components/PurchaseForm.vue";
 import moment from "moment";
-import { Ref } from "vue-property-decorator";
+import { Prop, Ref, Watch } from "vue-property-decorator";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;
 import { PurchaseTableSorter } from "@/mixins/PurchaseTableSorter";
+import FDatePickerModel from "./vuetify-component-wrappers/FDatePicker/FDatePickerModel";
 
 @Component({
   components: { PurchaseForm, FDataTable, FBtn },
 })
 export default class PurchaseTable extends PurchaseTableSorter {
+  @Prop({ required: true }) readonly filterMonth!: FDatePickerModel;
   @Ref("purchaseForm") readonly purchaseForm!: PurchaseForm;
   purchases: Purchase[] = [];
+  displayPurchases: Purchase[] = [];
   tempPurchase: Purchase | undefined | unknown = undefined;
   sortField = "sortId";
 
@@ -99,21 +106,27 @@ export default class PurchaseTable extends PurchaseTableSorter {
     this.unsubscribe = this.handleSnapshot();
 
     this.$root.$on("triggerPurchaseSort", () => {
-      this.sort(this.purchases);
+      this.sort(this.displayPurchases);
     });
   }
 
-  // filter(): void {
-  //   let filterMonth = new Date(this.$props.filterMonth);
-
-  //   this.purchases.forEach((purchase) => {
-  //     // console.log(filterMonth);
-  //   });
-  // }
+  @Watch("filterMonth", { immediate: true, deep: true })
+  filter(): void {
+    this.displayPurchases = this.purchases.filter((purchase) => {
+      if (
+        moment(purchase.date).month() ==
+          moment(this.filterMonth.value).month() &&
+        moment(purchase.date).year() == moment(this.filterMonth.value).year()
+      ) {
+        return true;
+      }
+    });
+    this.sort(this.displayPurchases);
+  }
 
   handleSnapshot(): Unsubscribe {
     return onSnapshot(query(Purchase.purchaseCollection), (querySnapshot) => {
-      this.purchases.splice(0);
+      this.purchases = [];
       querySnapshot.forEach((doc) => {
         this.tempPurchase = doc.data();
         if (this.tempPurchase instanceof Purchase) {
@@ -121,9 +134,9 @@ export default class PurchaseTable extends PurchaseTableSorter {
           this.purchases.push(this.tempPurchase);
         }
       });
-      this.sort(this.purchases);
+      this.sort(this.displayPurchases);
       this.sortField = "sortId";
-      // this.filter();
+      this.filter();
     });
   }
 }

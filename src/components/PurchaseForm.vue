@@ -1,18 +1,17 @@
 <template>
   <FCard :elevation="updateMode ? 10 : 2">
     <FCardTitle> Purchase Details </FCardTitle>
-    <div>{{ purchaseDate.value }}</div>
     <v-row class="my-2 d-flex justify-center">
       <FDatePicker
         class="elevation-1"
-        :datePickerModel="purchaseDate"
+        :datePickerModel="datePicker"
         show-adjacent-months
         color="#1976d3"
       ></FDatePicker>
     </v-row>
     <v-card-text class="pb-1 title">Category</v-card-text>
     <v-card-text class="pt-0 pb-2">
-      <v-chip-group column mandatory v-model="purchase.category">
+      <v-chip-group column mandatory v-model="category">
         <v-chip
           v-for="category in categories"
           :key="category.name"
@@ -29,14 +28,14 @@
       <v-card-text>
         <FTextField
           class="py-2"
-          v-model="purchase.description"
+          v-model="description"
           label="Description"
           :rules="fieldRequired"
           v-on:keyup.enter="submit"
         ></FTextField>
         <FCurrencyField
           class="py-2"
-          v-model="purchase.amount"
+          v-model="amount"
           label="Amount"
           :rules="fieldRequired"
           @focusout="amountZeroCheck"
@@ -70,7 +69,7 @@ import Purchase from "@/models/Purchase";
 import FCurrencyField from "@/components/vuetify-component-wrappers/FCurrencyField/FCurrencyField.vue";
 import FTextField from "@/components/vuetify-component-wrappers/FTextField/FTextField.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
-import moment from "moment";
+import moment, { now } from "moment";
 import { onSnapshot } from "firebase/firestore";
 import UserData from "@/models/UserData";
 import CategoryEditor from "@/components/PurchaseCategoryEditor.vue";
@@ -78,8 +77,7 @@ import PurchaseCategoryEditor from "@/components/PurchaseCategoryEditor.vue";
 import Category, { purchaseCategories } from "@/models/Category";
 import firebase from "firebase/compat";
 import Unsubscribe = firebase.Unsubscribe;
-import { FDatePickerModel } from "./vuetify-component-wrappers/FDatePicker/FDatePickerModel";
-import { FDatePickerModelType } from "./vuetify-component-wrappers/FDatePicker/FDatePickerModelType";
+import FDatePickerModel from "./vuetify-component-wrappers/FDatePicker/FDatePickerModel";
 
 @Component({
   components: {
@@ -94,23 +92,24 @@ import { FDatePickerModelType } from "./vuetify-component-wrappers/FDatePicker/F
   },
 })
 export default class PurchaseForm extends Vue {
-  /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
-
   @Ref("inputs") readonly inputs!: any;
+  // Field variables
+  id: string | undefined;
+  amount: number | null = null;
+  description = "";
+  category = "Add Category";
+  datePicker = new FDatePickerModel();
+
   fieldRequired = [(v: never): string | boolean => !!v || "Field is required"];
   showDialogue = false;
   updateMode = false;
-
-  purchaseDate: FDatePickerModel = new FDatePickerModel();
-
-  purchase = new Purchase(this.purchaseDate.value, "", "", null);
 
   categories: Category[] = [];
   unsubscribe: Unsubscribe | null = null;
 
   amountZeroCheck(): void {
-    if (this.purchase.amount == 0) {
-      this.purchase.amount = null;
+    if (this.amount == 0) {
+      this.amount = null;
     }
   }
 
@@ -122,25 +121,39 @@ export default class PurchaseForm extends Vue {
 
   isDisabled(): boolean {
     return (
-      this.purchase.amount == null ||
-      this.purchase.description == "" ||
-      this.purchase.category == "Add Category" ||
-      moment(this.purchase.date).isAfter(Date.now())
+      this.amount == null ||
+      this.description == "" ||
+      this.category == "Add Category" ||
+      moment(this.datePicker.value).isAfter(now(), "days")
     );
   }
 
   submit(): void {
+    let purchase = new Purchase(
+      this.datePicker.value,
+      this.description,
+      this.category,
+      this.amount
+    );
+
+    if (this.id) {
+      purchase.id = this.id;
+    }
+
     if (!this.isDisabled()) {
       this.updateMode && !this.isDisabled()
-        ? this.purchase.updateInDB()
-        : this.purchase.addToDB();
+        ? purchase.updateInDB()
+        : purchase.addToDB();
 
       this.clear();
     }
   }
 
   clear(): void {
-    this.purchase = new Purchase(this.purchaseDate.value, "", "", null);
+    this.description = "";
+    this.category = "Add Category";
+    this.amount = null;
+    this.datePicker.reset();
     this.inputs.resetValidation();
     this.updateMode = false;
   }
@@ -149,12 +162,16 @@ export default class PurchaseForm extends Vue {
     this.unsubscribe = this.handleSnapshot();
 
     this.$root.$on("editPurchase", (purchase: Purchase) => {
-      Object.assign(this.purchase, purchase);
+      this.id = purchase.id;
+      this.datePicker.value = purchase.date;
+      this.category = purchase.category;
+      this.description = purchase.description;
+      this.amount = purchase.amount;
       this.updateMode = true;
     });
 
     this.$root.$on("purchaseDeletedWithID", (id: string | undefined) => {
-      if (id != undefined && this.purchase.id == id) {
+      if (id != undefined && this.id == id) {
         this.clear();
       }
     });

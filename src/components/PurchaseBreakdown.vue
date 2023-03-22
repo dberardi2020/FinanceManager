@@ -8,8 +8,8 @@
         <v-spacer></v-spacer>
         <v-card-title class="remove_padding"
           >${{
-            this.totalsBreakdown.has("active")
-              ? this.totalsBreakdown.get("active").toFixed(2)
+            totalsBreakdown.has("active")
+              ? totalsBreakdown.get("active").toFixed(2)
               : (0).toFixed(2)
           }}</v-card-title
         >
@@ -19,8 +19,8 @@
         <v-spacer></v-spacer>
         <v-card-title class="remove_padding"
           >$-{{
-            this.totalsBreakdown.has("spent")
-              ? this.totalsBreakdown.get("spent").toFixed(2)
+            totalsBreakdown.has("spent")
+              ? totalsBreakdown.get("spent").toFixed(2)
               : (0).toFixed(2)
           }}</v-card-title
         >
@@ -30,14 +30,14 @@
         <v-spacer></v-spacer>
         <v-card-title class="remove_padding"
           >${{
-            this.totalsBreakdown.has("left")
-              ? this.totalsBreakdown.get("left").toFixed(2)
+            totalsBreakdown.has("left")
+              ? totalsBreakdown.get("left").toFixed(2)
               : (0).toFixed(2)
           }}</v-card-title
         >
       </v-row>
       <div class="py-2"></div>
-      <v-row v-for="[key, value] in this.categoriesBreakdown" :key="key">
+      <v-row v-for="[key, value] in categoriesBreakdown" :key="key">
         <v-card-title class="remove_padding">{{ key }}</v-card-title>
         <v-spacer></v-spacer>
         <v-card-title class="remove_padding"
@@ -49,12 +49,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import FCard from "@/components/vuetify-component-wrappers/FCard/FCard.vue";
 import FCardTitle from "@/components/vuetify-component-wrappers/FCardTitle/FCardTitle.vue";
 import { onSnapshot, query } from "firebase/firestore";
 import Purchase from "@/models/Purchase";
 import Subscription from "@/models/Subscription";
+import FDatePickerModel from "@/components/vuetify-component-wrappers/FDatePicker/FDatePickerModel.js";
+import moment from "moment";
 
 @Component({
   components: {
@@ -63,6 +65,7 @@ import Subscription from "@/models/Subscription";
   },
 })
 export default class PurchaseBreakdown extends Vue {
+  @Prop({ required: true }) readonly filterMonth!: FDatePickerModel;
   totalsBreakdown = new Map();
   categoriesBreakdown = new Map();
   snapshotUpdates = 0;
@@ -101,6 +104,11 @@ export default class PurchaseBreakdown extends Vue {
     );
   }
 
+  @Watch("filterMonth", { immediate: true, deep: true })
+  update(): void {
+    this.handleSnapshots();
+  }
+
   handleSnapshots(): void {
     onSnapshot(query(Purchase.purchaseCollection), (querySnapshot) => {
       this.categoriesBreakdown.clear();
@@ -110,7 +118,10 @@ export default class PurchaseBreakdown extends Vue {
         if (
           purchase instanceof Purchase &&
           purchase.amount &&
-          purchase.category
+          purchase.category &&
+          moment(purchase.date).month() ==
+            moment(this.filterMonth.value).month() &&
+          moment(purchase.date).year() == moment(this.filterMonth.value).year()
         ) {
           this.calculateCategories(purchase.amount, purchase.category);
         }

@@ -1,11 +1,16 @@
+import moment from "moment";
+import { now } from "moment";
 import { FDatePickerModelType } from "./FDatePickerModelType";
 
-export class FDatePickerModel {
+export default class FDatePickerModel {
   public value: string;
+
+  private _initialValue: string;
   private _type: FDatePickerModelType;
 
-  constructor(type = FDatePickerModelType.date, date = new Date()) {
-    this.value = this.convertDateToISOString(date, type);
+  constructor(type = FDatePickerModelType.date, date = moment(now())) {
+    this.value = date.format(this.getFormatFromType(type));
+    this._initialValue = this.value;
     this._type = type;
   }
 
@@ -13,19 +18,16 @@ export class FDatePickerModel {
     return this._type;
   }
 
-  private convertDateToISOString(
-    date: Date,
-    type: FDatePickerModelType
-  ): string {
-    return date.toISOString().substring(0, this.getIndexFromType(type));
+  public reset(): void {
+    this.value = this._initialValue;
   }
 
-  private getIndexFromType(type: FDatePickerModelType): number {
+  private getFormatFromType(type: FDatePickerModelType): string {
     switch (type) {
       case FDatePickerModelType.date:
-        return 10;
+        return "YYYY-MM-DD";
       case FDatePickerModelType.month:
-        return 7;
+        return "YYYY-MM";
     }
   }
 }
