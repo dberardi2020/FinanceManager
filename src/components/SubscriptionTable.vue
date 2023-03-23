@@ -20,7 +20,12 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <v-icon small class="mr-2" @click="editSub(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteSub(item)"> mdi-delete </v-icon>
+        <v-icon small class="mr-2" @click="deleteSub(item)">
+          mdi-delete
+        </v-icon>
+        <v-icon v-if="item.url" small @click="openLink(item)">
+          mdi-link
+        </v-icon>
       </template>
     </FDataTable>
   </div>
@@ -107,6 +112,7 @@ export default class SubscriptionTable extends SubscriptionTableSorter {
 
   editSub(subscription: Subscription): void {
     this.$root.$emit("editSubscription", subscription);
+    window.scrollTo(0, 0);
   }
 
   deleteSub(subscription: Subscription): void {
@@ -120,6 +126,10 @@ export default class SubscriptionTable extends SubscriptionTableSorter {
       .catch(() => {
         return;
       });
+  }
+
+  openLink(subscription: Subscription): void {
+    window.open(subscription.url);
   }
 
   mounted(): void {

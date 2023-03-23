@@ -36,6 +36,12 @@
           :rules="fieldRequired"
           v-on:keyup.enter="submit"
         ></FTextField>
+        <FTextField
+          class="py-2"
+          v-model="subscription.url"
+          label="URL"
+          v-on:keyup.enter="submit"
+        ></FTextField>
         <FCurrencyField
           class="pt-2"
           v-model="subscription.amount"
@@ -100,7 +106,7 @@ export default class SubscriptionForm extends Vue {
   showDialogue = false;
   updateMode = false;
 
-  subscription = new Subscription(true, true, "", null, "", "");
+  subscription = new Subscription(true, true, "", null, "", "", "");
 
   categories: Category[] = [];
   unsubscribe: Unsubscribe | null = null;
@@ -137,7 +143,7 @@ export default class SubscriptionForm extends Vue {
   }
 
   clear(): void {
-    this.subscription = new Subscription(true, true, "", null, "", "");
+    this.subscription = new Subscription(true, true, "", null, "", "", "");
     this.inputs.resetValidation();
     this.updateMode = false;
   }

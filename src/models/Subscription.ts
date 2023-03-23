@@ -13,6 +13,7 @@ export default class Subscription {
   amount: number | null;
   source: string;
   destination: string;
+  url: string;
 
   constructor(
     isActive: boolean,
@@ -20,7 +21,8 @@ export default class Subscription {
     category: string,
     amount: number | null,
     source: string,
-    destination: string
+    destination: string,
+    url: string
   ) {
     this.isActive = isActive;
     this.isWithdrawal = isWithdrawal;
@@ -28,6 +30,7 @@ export default class Subscription {
     this.amount = amount;
     this.source = source;
     this.destination = destination;
+    this.url = url;
   }
 
   async addToDB(): Promise<void> {
@@ -74,6 +77,7 @@ export const subConverter = {
     amount: sub.amount,
     source: sub.source,
     destination: sub.destination,
+    url: sub.url,
   }),
   fromFirestore: (snapshot: any, options: any) => {
     const data = snapshot.data(options);
@@ -83,7 +87,8 @@ export const subConverter = {
       data.category,
       data.amount,
       data.source,
-      data.destination
+      data.destination,
+      data.url
     );
   },
 };
