@@ -12,15 +12,13 @@
 
       <v-spacer></v-spacer>
 
-      <FBtn v-if="!isUserLoggedIn()" text to="login">Log In</FBtn>
-      <FMenu v-if="isUserLoggedIn()">
+      <FMenu v-if="userData.userLoggedIn">
         <template v-slot:hoverItem>
-          <FBtn text>{{ loggedInUserEmail() }}</FBtn>
+          <FBtn text>{{ userData.userEmail }}</FBtn>
         </template>
         <template v-slot:dropdownItem>
           <v-list>
-            <v-list-item>Settings</v-list-item>
-            <v-list-item @click="logout()">Log Out</v-list-item>
+            <v-list-item @click="logOutBtnClick">Log Out</v-list-item>
           </v-list>
         </template>
       </FMenu>
@@ -37,13 +35,10 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import FBtn from "@/components/vuetify-component-wrappers/FBtn/FBtn.vue";
 import FMenu from "@/components/vuetify-component-wrappers/FMenu/FMenu.vue";
-import { getAuth, signOut } from "firebase/auth";
-import { getModule } from "vuex-module-decorators";
-import { UserStore } from "@/store/UserStore";
-import store from "@/store";
-import router from "@/router";
-
-const userStore = getModule(UserStore, store);
+import UserDataStoreHandler from "@/store/handlers/UserDataStoreHandler";
+import UserAuthHandler from "@/mixins/UserAuthHandler";
+import RoutesHandler from "@/mixins/RoutesHandler";
+import { RoutesEnum } from "@/enums/RoutesEnum";
 
 @Component({
   components: { FMenu, FBtn },
@@ -53,28 +48,19 @@ export default class App extends Vue {
   appTitle = "Finance Manager";
   sidebar = false;
   menuItems = [
-    // { title: "Home", path: "/" },
+    { title: "Home", path: "/" },
     { title: "Subscriptions", path: "/subscriptions" },
     { title: "Purchases", path: "/purchases" },
   ];
 
-  loggedInUserEmail(): string {
-    return userStore.user?.email ?? "";
-  }
+  userData = new UserDataStoreHandler();
+  userAuthHandler = new UserAuthHandler();
+  routesHandler = new RoutesHandler();
 
-  isUserLoggedIn(): boolean {
-    return !!userStore.user;
-  }
-
-  logout(): void {
-    const auth = getAuth();
-    signOut(auth)
-      .then(() => {
-        router.push({ name: "LogIn" });
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
+  logOutBtnClick(): void {
+    this.userAuthHandler.logOutCurrentUser().then((success) => {
+      success && this.routesHandler.pushRoute(RoutesEnum.LogIn);
+    });
   }
 }
 </script>

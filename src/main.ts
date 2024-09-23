@@ -5,14 +5,12 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import VueSimpleAlert from "vue-simple-alert";
 import "./plugins/v-currency-field";
-import { getModule } from "vuex-module-decorators";
-import { UserStore } from "@/store/UserStore";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-
-const userStore = getModule(UserStore, store);
+import UserAuthHandler from "@/mixins/UserAuthHandler";
+import RoutesHandler from "@/mixins/RoutesHandler";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBV60lSb6Y1Y8ojVOR4zYn6NBz5U-cd9x4",
@@ -38,7 +36,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueSimpleAlert);
 
-checkAuth().then(() => {
+UserAuthHandler.initializeUserStoreAuthListener().then(() => {
   new Vue({
     router,
     store,
@@ -47,17 +45,4 @@ checkAuth().then(() => {
   }).$mount("#app");
 });
 
-// Listen for auth state change and update store
-function checkAuth(): Promise<boolean> {
-  return new Promise((resolve) => {
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        userStore.setUser(user);
-        resolve(true);
-      } else {
-        userStore.setUser(null);
-        resolve(true);
-      }
-    });
-  });
-}
+RoutesHandler.initializeRouterGuard();
